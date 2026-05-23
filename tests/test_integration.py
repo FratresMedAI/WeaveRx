@@ -4,18 +4,20 @@ from __future__ import annotations
 
 import json
 import re
+from unittest.mock import MagicMock, patch
 
 import pytest
 from typer.testing import CliRunner
 
 from weaverx.cli import app
 from weaverx.github import GitHubClient, GitHubIssue
-from weaverx.llm import GrokLLMProvider, MockLLMProvider
+from weaverx.llm import LiteLLMProvider, MockLLMProvider
 from weaverx.triage import TriageOptions, TriageOrchestrator
 
 runner = CliRunner()
 
 ISSUES_LIST_RE = re.compile(r".*/repos/[^/]+/[^/]+/issues(\?.*)?$")
+COMMENTS_RE = re.compile(r".*/repos/[^/]+/[^/]+/issues/\d+/comments(\?.*)?$")
 
 SAMPLE_ISSUE = {
     "number": 99,
@@ -40,25 +42,22 @@ SAMPLE_LIST = [
     },
 ]
 
-GROK_RESPONSE = {
-    "choices": [
+LLM_RESPONSE = {
+    "category": "dataset-access-licensing",
+    "priority": "medium",
+    "impact_summary": "Dataset access blocked.",
+    "duplicate_likelihood": 0.2,
+    "suggested_labels": ["dataset"],
+    "draft_response": "Hi @researcher - thanks for reporting this.",
+    "privacy_flags": [],
+    "reasoning": "Dataset licensing issue.",
+    "sources": [
         {
-            "message": {
-                "content": json.dumps(
-                    {
-                        "category": "dataset-access-licensing",
-                        "priority": "medium",
-                        "impact_summary": "Dataset access blocked.",
-                        "duplicate_likelihood": 0.2,
-                        "suggested_labels": ["dataset"],
-                        "draft_response": "Hi @researcher - thanks for reporting this.",
-                        "privacy_flags": [],
-                        "reasoning": "Dataset licensing issue.",
-                    }
-                )
-            }
+            "type": "issue_body",
+            "snippet": "The dataset access page returns 403",
+            "reason": "Dataset access failure described in issue body.",
         }
-    ]
+    ],
 }
 
 
@@ -72,6 +71,24 @@ def test_github_fetch_issue(httpx_mock: pytest.HttpXMock) -> None:
         issue = client.fetch_issue("org/repo", 99)
     assert issue.number == 99
     assert issue.title.startswith("Cannot download")
+
+
+@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
+def test_github_fetch_issue_comments(httpx_mock: pytest.HttpXMock) -> None:
+    httpx_mock.add_response(
+        url=COMMENTS_RE,
+        json=[
+            {
+                "body": "Please retry the license form.",
+                "user": {"login": "maintainer"},
+                "created_at": "2026-01-01T00:00:00Z",
+            }
+        ],
+    )
+    with GitHubClient(None) as client:
+        comments = client.fetch_issue_comments("org/repo", 99)
+    assert len(comments) == 1
+    assert comments[0].user == "maintainer"
 
 
 @pytest.mark.httpx_mock(can_send_already_matched_responses=True)
@@ -89,12 +106,7 @@ def test_github_fetch_recent_skips_prs(httpx_mock: pytest.HttpXMock) -> None:
     assert all(isinstance(i, GitHubIssue) for i in issues)
 
 
-@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
-def test_grok_provider_parses_json(httpx_mock: pytest.HttpXMock) -> None:
-    httpx_mock.add_response(
-        url="https://api.x.ai/v1/chat/completions",
-        json=GROK_RESPONSE,
-    )
+def test_litellm_provider_parses_json() -> None:
     issue = GitHubIssue(
         number=1,
         title="Dataset issue",
@@ -104,10 +116,18 @@ def test_grok_provider_parses_json(httpx_mock: pytest.HttpXMock) -> None:
         labels=(),
         user="u",
     )
-    provider = GrokLLMProvider("test-key")
-    analysis = provider.analyze(issue, duplicate_candidates=[], heuristic_duplicate_score=0.0)
+    mock_response = MagicMock()
+    mock_response.choices = [
+        MagicMock(message=MagicMock(content=json.dumps(LLM_RESPONSE)))
+    ]
+
+    with patch("weaverx.llm.litellm.completion", return_value=mock_response):
+        provider = LiteLLMProvider(provider="grok", model="xai/grok-2-latest", api_key="test-key")
+        analysis = provider.analyze(issue, duplicate_candidates=[], heuristic_duplicate_score=0.0)
+
     assert analysis.category == "dataset-access-licensing"
     assert analysis.draft_response.startswith("Hi @researcher")
+    assert analysis.sources
 
 
 def test_mock_llm_categorizes_by_content() -> None:
@@ -127,6 +147,7 @@ def test_mock_llm_categorizes_by_content() -> None:
         heuristic_duplicate_score=0.0,
     )
     assert analysis.category == "dataset-access-licensing"
+    assert analysis.sources
 
     privacy_issue = GitHubIssue(
         number=2,
@@ -152,6 +173,7 @@ def test_triage_with_mock_llm_and_mocked_github(httpx_mock: pytest.HttpXMock) ->
         url="https://api.github.com/repos/Project-MONAI/MONAI/issues/99",
         json=SAMPLE_ISSUE,
     )
+    httpx_mock.add_response(url=COMMENTS_RE, json=[])
     httpx_mock.add_response(
         url=ISSUES_LIST_RE,
         json=SAMPLE_LIST,
@@ -169,6 +191,10 @@ def test_triage_with_mock_llm_and_mocked_github(httpx_mock: pytest.HttpXMock) ->
     assert result.analysis.category == "dataset-access-licensing"
     assert result.draft_response
     assert result.dry_run is True
+    payload = result.to_dict()
+    assert payload["status"] == "ready_for_review"
+    assert payload["sources"]
+    assert payload["llm"]["provider"] == "mock"
 
 
 def test_post_comment_without_confirm_does_not_post() -> None:

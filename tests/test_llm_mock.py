@@ -18,6 +18,8 @@ def test_mock_llm_returns_valid_analysis() -> None:
     assert analysis.priority in {"low", "medium", "high", "critical"}
     assert 0.0 <= analysis.duplicate_likelihood <= 1.0
     assert analysis.draft_response
+    assert analysis.sources
+    assert analysis.sources[0].type in {"issue_title", "issue_body"}
 
 
 def test_privacy_keyword_scan() -> None:

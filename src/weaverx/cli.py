@@ -86,6 +86,19 @@ def render_triage_result(result: TriageResult, *, verbose: bool = False) -> None
     table.add_row("Impact", analysis.impact_summary)
     table.add_row("Duplicate likelihood", _render_duplicate_bar(analysis.duplicate_likelihood))
     table.add_row("Suggested labels", ", ".join(analysis.suggested_labels) or "-")
+    table.add_row("Status", result.result_status().replace("_", " "))
+
+    if analysis.sources:
+        if verbose:
+            source_lines = [
+                f"[{s.type}] {_truncate(s.snippet, 80)} — {s.reason}" for s in analysis.sources
+            ]
+            table.add_row("Sources", "\n".join(source_lines))
+        else:
+            table.add_row("Sources", f"{len(analysis.sources)} excerpt(s) (use --verbose)")
+
+    if result.llm is not None:
+        table.add_row("LLM", f"{result.llm.provider} / {result.llm.model}")
 
     if analysis.privacy_flags:
         table.add_row("Privacy flags", ", ".join(analysis.privacy_flags))
@@ -213,6 +226,16 @@ def triage_command(
             help="Run local draft safeguard heuristics (default: on).",
         ),
     ] = True,
+    llm_provider: Annotated[
+        str | None,
+        typer.Option(
+            "--llm-provider",
+            help=(
+                "LLM provider: grok, anthropic, or openai "
+                "(default: grok or WEAVERX_LLM_PROVIDER)."
+            ),
+        ),
+    ] = None,
     post_comment: Annotated[
         bool,
         typer.Option("--post-comment", help="Post draft response (requires --confirm)."),
@@ -248,12 +271,17 @@ def triage_command(
         confirm=confirm,
         privacy_insight=privacy_insight,
         safeguards=safeguards,
+        llm_provider=llm_provider,
         post_comment=post_comment,
         apply_labels=apply_labels,
     )
 
     try:
-        orchestrator = build_orchestrator(mock=mock, mock_llm=mock_llm)
+        orchestrator = build_orchestrator(
+            mock=mock,
+            mock_llm=mock_llm,
+            llm_provider=llm_provider,
+        )
 
         if recent is not None:
             results = orchestrator.triage_recent(options)

@@ -1,9 +1,10 @@
 {
   "repo": "Project-MONAI/MONAI",
+  "status": "ready_for_review",
   "issue": {
     "number": 42,
     "title": "Unable to reproduce nnU-Net training results on BraTS subset",
-    "url": "https://github.com/example/med-ai/issues/42",
+    "url": "https://github.com/Project-MONAI/MONAI/issues/42",
     "author": "researcher-dev",
     "labels": ["question"]
   },
@@ -15,9 +16,33 @@
     "suggested_labels": ["reproducibility", "nnunet", "question"],
     "draft_response": "Hi @researcher-dev — thank you for taking the time to write this up.\n\nReproducibility questions like this are so valuable for the medical AI community...",
     "privacy_flags": [],
-    "reasoning": "Issue describes nnU-Net/MONAI repro on BraTS with version details—classic reproducibility category."
+    "reasoning": "Issue cites nnU-Net v2.1 and MONAI transforms on BraTS with version details.",
+    "sources": [
+      {
+        "type": "issue_body",
+        "snippet": "I'm trying to reproduce the BraTS segmentation benchmark using nnU-Net v2 with CUDA 12.1 and PyTorch 2.2.",
+        "reason": "Identified reproducibility concern with version-specific stack."
+      },
+      {
+        "type": "issue_title",
+        "snippet": "Unable to reproduce nnU-Net training results on BraTS subset",
+        "reason": "Confirmed triage category: reproducibility-environment."
+      }
+    ]
   },
   "category_display": "Reproducibility & Environment",
+  "sources": [
+    {
+      "type": "issue_body",
+      "snippet": "I'm trying to reproduce the BraTS segmentation benchmark using nnU-Net v2 with CUDA 12.1 and PyTorch 2.2.",
+      "reason": "Identified reproducibility concern with version-specific stack."
+    },
+    {
+      "type": "issue_title",
+      "snippet": "Unable to reproduce nnU-Net training results on BraTS subset",
+      "reason": "Confirmed triage category: reproducibility-environment."
+    }
+  ],
   "duplicate_matches": [],
   "heuristic_duplicate_score": 0.0,
   "draft_response": "Hi @researcher-dev — thank you for taking the time to write this up.\n\nReproducibility questions like this are so valuable for the medical AI community. Could you share your MONAI and nnU-Net versions, CUDA/PyTorch stack, and the exact BraTS preprocessing steps you used?",
@@ -33,6 +58,10 @@
       "relevance_ratio": 0.27
     },
     "checks_run": ["entropy", "length_repetition", "patterns", "relevance"]
+  },
+  "llm": {
+    "provider": "mock",
+    "model": "mock"
   },
   "dry_run": true,
   "posted_comment": false,

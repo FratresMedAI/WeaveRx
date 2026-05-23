@@ -1,13 +1,14 @@
-"""LLM providers for medical AI issue triage (Grok-first)."""
+"""LLM providers for medical AI issue triage (multi-provider via LiteLLM)."""
 
 from __future__ import annotations
 
 import json
+import os
 import re
 from abc import ABC, abstractmethod
 from typing import Any, Literal
 
-import httpx
+import litellm
 from pydantic import BaseModel, Field, field_validator
 
 from weaverx.categories import (
@@ -18,9 +19,34 @@ from weaverx.categories import (
     category_prompt_block,
     validate_category_slug,
 )
-from weaverx.github import GitHubIssue
+from weaverx.github import GitHubComment, GitHubIssue
 
 PriorityLevel = Literal["low", "medium", "high", "critical"]
+LLMProviderName = Literal["grok", "anthropic", "openai", "mock"]
+SourceType = Literal["issue_title", "issue_body", "issue_comment", "duplicate_issue"]
+
+DEFAULT_MODELS: dict[str, str] = {
+    "grok": "xai/grok-2-latest",
+    "anthropic": "anthropic/claude-3-5-sonnet-20241022",
+    "openai": "openai/gpt-4o",
+}
+
+PROVIDER_API_KEY_ENV: dict[str, str] = {
+    "grok": "XAI_API_KEY",
+    "anthropic": "ANTHROPIC_API_KEY",
+    "openai": "OPENAI_API_KEY",
+}
+
+
+class TriageSource(BaseModel):
+    type: SourceType
+    snippet: str
+    reason: str
+
+    @field_validator("snippet")
+    @classmethod
+    def trim_snippet(cls, value: str) -> str:
+        return value.strip()[:500]
 
 
 class TriageAnalysis(BaseModel):
@@ -32,6 +58,7 @@ class TriageAnalysis(BaseModel):
     draft_response: str
     privacy_flags: list[str] = Field(default_factory=list)
     reasoning: str
+    sources: list[TriageSource] = Field(default_factory=list)
 
     @field_validator("category")
     @classmethod
@@ -61,6 +88,11 @@ class DuplicateMatch(BaseModel):
     title: str
     score: float
     url: str
+
+
+class LLMMetadata(BaseModel):
+    provider: LLMProviderName
+    model: str
 
 
 def _build_system_prompt(*, privacy_insight: bool) -> str:
@@ -95,16 +127,18 @@ Respond with ONLY valid JSON matching this schema:
   "suggested_labels": ["label1", "label2"],
   "draft_response": "<supportive GitHub comment, markdown ok>",
   "privacy_flags": ["flag1"],
-  "reasoning": "<brief maintainer note>"
+  "reasoning": "<brief maintainer note>",
+  "sources": [
+    {{
+      "type": "issue_title|issue_body|issue_comment|duplicate_issue",
+      "snippet": "<short excerpt from the issue or comment>",
+      "reason": "<why this excerpt grounded your triage decision>"
+    }}
+  ]
 }}
 
-Few-shot tone examples:
-- Reproducibility: "Thanks for documenting your setup so carefully—reproducibility is everything
-  in medical AI. Could you share your nnU-Net plans identifier and preprocessing JSON?"
-- Dataset access: "Dataset access friction is something many of us hit. The current process is
-  documented in …; if you're blocked on licensing, we're happy to clarify what's needed."
-- Privacy: "We appreciate you raising this. Please avoid posting patient identifiers in issues;
-  de-identified screenshots or synthetic examples help us help you safely."
+Include 1-4 sources citing the specific issue text (title, body, or comments) that informed
+your category, priority, and draft. Keep snippets short and verbatim where possible.
 {privacy_note}
 """
 
@@ -114,6 +148,7 @@ def _build_user_prompt(
     *,
     duplicate_candidates: list[DuplicateMatch],
     heuristic_duplicate_score: float,
+    issue_comments: list[GitHubComment] | None = None,
 ) -> str:
     dupes_text = "None found."
     if duplicate_candidates:
@@ -123,6 +158,14 @@ def _build_user_prompt(
         ]
         dupes_text = "\n".join(lines)
 
+    comments_text = "None."
+    if issue_comments:
+        comment_lines = [
+            f"- @{c.user or 'unknown'}: {c.body[:400]}{'...' if len(c.body) > 400 else ''}"
+            for c in issue_comments[:5]
+        ]
+        comments_text = "\n".join(comment_lines)
+
     return f"""Triage this GitHub issue:
 
 **Repository issue:** #{issue.number}
@@ -131,6 +174,9 @@ def _build_user_prompt(
 **Labels:** {", ".join(issue.labels) or "none"}
 **Body:**
 {issue.body or "(empty)"}
+
+**Recent comments:**
+{comments_text}
 
 Heuristic duplicate score from recent issues: {heuristic_duplicate_score:.2f}
 Candidate duplicates:
@@ -169,7 +215,61 @@ def _extract_json(content: str) -> dict[str, Any]:
     raise ValueError(f"LLM response did not contain valid JSON: {content[:200]}...")
 
 
+def _normalize_provider(value: str | None) -> LLMProviderName:
+    normalized = (value or os.environ.get("WEAVERX_LLM_PROVIDER", "grok")).lower().strip()
+    if normalized in {"grok", "anthropic", "openai", "mock"}:
+        return normalized  # type: ignore[return-value]
+    raise ValueError(
+        f"Unsupported LLM provider: {normalized!r}. "
+        "Use grok, anthropic, or openai (or --mock for offline)."
+    )
+
+
+def resolve_model(provider: LLMProviderName, model: str | None = None) -> str:
+    if model:
+        return model
+    env_model = os.environ.get("WEAVERX_LLM_MODEL")
+    if env_model:
+        return env_model
+    if provider == "mock":
+        return "mock"
+    return DEFAULT_MODELS[provider]
+
+
+def resolve_api_key(provider: LLMProviderName) -> str | None:
+    if provider == "mock":
+        return None
+    env_name = PROVIDER_API_KEY_ENV[provider]
+    return os.environ.get(env_name)
+
+
+def _build_mock_sources(issue: GitHubIssue, category: str) -> list[TriageSource]:
+    sources = [
+        TriageSource(
+            type="issue_title",
+            snippet=issue.title,
+            reason=f"Confirmed triage category: {category}.",
+        )
+    ]
+    if issue.body:
+        first_line = next((line.strip() for line in issue.body.splitlines() if line.strip()), "")
+        if first_line:
+            sources.append(
+                TriageSource(
+                    type="issue_body",
+                    snippet=first_line[:300],
+                    reason="Key issue details used for classification and draft.",
+                )
+            )
+    return sources
+
+
 class LLMProvider(ABC):
+    @property
+    @abstractmethod
+    def metadata(self) -> LLMMetadata:
+        raise NotImplementedError
+
     @abstractmethod
     def analyze(
         self,
@@ -178,12 +278,17 @@ class LLMProvider(ABC):
         duplicate_candidates: list[DuplicateMatch],
         heuristic_duplicate_score: float,
         privacy_insight: bool = True,
+        issue_comments: list[GitHubComment] | None = None,
     ) -> TriageAnalysis:
         raise NotImplementedError
 
 
 class MockLLMProvider(LLMProvider):
     """Deterministic offline provider for tests and demos."""
+
+    @property
+    def metadata(self) -> LLMMetadata:
+        return LLMMetadata(provider="mock", model="mock")
 
     def analyze(
         self,
@@ -192,7 +297,9 @@ class MockLLMProvider(LLMProvider):
         duplicate_candidates: list[DuplicateMatch],
         heuristic_duplicate_score: float,
         privacy_insight: bool = True,
+        issue_comments: list[GitHubComment] | None = None,
     ) -> TriageAnalysis:
+        del issue_comments
         text = f"{issue.title}\n{issue.body}"
         lowered = text.lower()
         privacy_flags = scan_privacy_keywords(text) if privacy_insight else []
@@ -201,6 +308,17 @@ class MockLLMProvider(LLMProvider):
         category, priority, labels, impact = _infer_mock_analysis(lowered, privacy_flags)
         cat = CATEGORY_BY_SLUG[category]
         draft = _build_mock_draft(issue, category, cat.healer_framing, impact)
+        sources = _build_mock_sources(issue, category)
+
+        if duplicate_candidates:
+            top = duplicate_candidates[0]
+            sources.append(
+                TriageSource(
+                    type="duplicate_issue",
+                    snippet=top.title,
+                    reason=f"Heuristic duplicate score {top.score:.2f} from recent issues.",
+                )
+            )
 
         return TriageAnalysis(
             category=category,
@@ -212,8 +330,9 @@ class MockLLMProvider(LLMProvider):
             privacy_flags=privacy_flags,
             reasoning=(
                 f"Heuristic mock triage classified as {cat.display_name}. "
-                f"Use XAI_API_KEY for full Grok analysis."
+                f"Set an LLM API key for full provider analysis."
             ),
+            sources=sources,
         )
 
 
@@ -347,23 +466,25 @@ def _build_mock_draft(
     return "\n".join(lines)
 
 
-class GrokLLMProvider(LLMProvider):
-    API_URL = "https://api.x.ai/v1/chat/completions"
-    DEFAULT_MODEL = "grok-2-latest"
+class LiteLLMProvider(LLMProvider):
+    """Unified provider backed by LiteLLM (Grok, Anthropic, OpenAI-compatible)."""
 
     def __init__(
         self,
-        api_key: str,
         *,
-        model: str | None = None,
-        timeout: float = 60.0,
+        provider: LLMProviderName,
+        model: str,
+        api_key: str,
     ) -> None:
+        if provider == "mock":
+            raise ValueError("Use MockLLMProvider for mock mode.")
+        self._provider = provider
+        self._model = model
         self._api_key = api_key
-        self._model = model or self.DEFAULT_MODEL
-        self._client = httpx.Client(timeout=timeout)
 
-    def close(self) -> None:
-        self._client.close()
+    @property
+    def metadata(self) -> LLMMetadata:
+        return LLMMetadata(provider=self._provider, model=self._model)
 
     def analyze(
         self,
@@ -372,6 +493,7 @@ class GrokLLMProvider(LLMProvider):
         duplicate_candidates: list[DuplicateMatch],
         heuristic_duplicate_score: float,
         privacy_insight: bool = True,
+        issue_comments: list[GitHubComment] | None = None,
     ) -> TriageAnalysis:
         messages = [
             {"role": "system", "content": _build_system_prompt(privacy_insight=privacy_insight)},
@@ -381,27 +503,32 @@ class GrokLLMProvider(LLMProvider):
                     issue,
                     duplicate_candidates=duplicate_candidates,
                     heuristic_duplicate_score=heuristic_duplicate_score,
+                    issue_comments=issue_comments,
                 ),
             },
         ]
-        response = self._client.post(
-            self.API_URL,
-            headers={
-                "Authorization": f"Bearer {self._api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": self._model,
-                "messages": messages,
-                "temperature": 0.2,
-                "response_format": {"type": "json_object"},
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        content = data["choices"][0]["message"]["content"]
+        kwargs: dict[str, Any] = {
+            "model": self._model,
+            "messages": messages,
+            "temperature": 0.2,
+            "response_format": {"type": "json_object"},
+            "api_key": self._api_key,
+        }
+        if self._provider == "openai" and os.environ.get("OPENAI_API_BASE"):
+            kwargs["api_base"] = os.environ["OPENAI_API_BASE"]
+
+        response = litellm.completion(**kwargs)
+        content = response.choices[0].message.content
+        if not content:
+            raise ValueError("LLM returned empty content.")
         parsed = _extract_json(content)
+        if "sources" not in parsed:
+            parsed["sources"] = []
         analysis = TriageAnalysis.model_validate(parsed)
+        if not analysis.sources:
+            analysis = analysis.model_copy(
+                update={"sources": _build_mock_sources(issue, analysis.category)}
+            )
 
         if privacy_insight:
             keyword_flags = scan_privacy_keywords(f"{issue.title}\n{issue.body}")
@@ -411,14 +538,25 @@ class GrokLLMProvider(LLMProvider):
         return analysis
 
 
-def create_llm_provider(*, mock: bool, api_key: str | None) -> LLMProvider:
+def create_llm_provider(
+    *,
+    mock: bool,
+    provider: str | None = None,
+    model: str | None = None,
+) -> LLMProvider:
     if mock:
         return MockLLMProvider()
+
+    provider_name = _normalize_provider(provider)
+    resolved_model = resolve_model(provider_name, model)
+    api_key = resolve_api_key(provider_name)
     if not api_key:
+        env_name = PROVIDER_API_KEY_ENV[provider_name]
         raise ValueError(
-            "XAI_API_KEY is required for LLM analysis. Set the env var or pass --mock."
+            f"{env_name} is required for LLM analysis with provider {provider_name!r}. "
+            "Set the env var or pass --mock."
         )
-    return GrokLLMProvider(api_key)
+    return LiteLLMProvider(provider=provider_name, model=resolved_model, api_key=api_key)
 
 
 def default_labels_for_category(slug: str) -> list[str]:

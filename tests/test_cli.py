@@ -29,6 +29,8 @@ def test_triage_mock_json() -> None:
     assert "reproducibility-environment" in result.stdout
     assert "draft_response" in result.stdout
     assert "safeguard" in result.stdout
+    assert "ready_for_review" in result.stdout
+    assert "sources" in result.stdout
 
 
 def test_triage_requires_issue_or_recent() -> None:

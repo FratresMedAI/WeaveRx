@@ -1,0 +1,53 @@
+name: WeaveRx feedback
+description: Report a bug or suggest an improvement for WeaveRx itself
+title: "[WeaveRx]: "
+labels: ["triage-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve WeaveRx. Do not paste API keys, patient data, or PHI.
+
+  - type: input
+    id: version
+    attributes:
+      label: WeaveRx version
+      description: Output of `weaverx --version`
+      placeholder: "weaverx 0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type
+      options:
+        - Bug
+        - Feature request
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or workflow
+      description: What you ran (redact secrets)
+      placeholder: "weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

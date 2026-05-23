@@ -18,7 +18,10 @@ def test_mock_triage_single_issue() -> None:
     assert result.draft_response
     payload = result.to_dict()
     assert payload["repo"] == "Project-MONAI/MONAI"
+    assert payload["status"] == "ready_for_review"
     assert "analysis" in payload
+    assert payload["sources"]
+    assert payload["llm"]["provider"] == "mock"
     assert payload["safeguard"] is not None
     assert "score" in payload["safeguard"]
     assert "status" in payload["safeguard"]

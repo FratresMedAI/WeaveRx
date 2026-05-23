@@ -21,6 +21,13 @@ class GitHubIssue:
     user: str | None
 
 
+@dataclass(frozen=True, slots=True)
+class GitHubComment:
+    user: str | None
+    body: str
+    created_at: str | None = None
+
+
 class GitHubClient:
     API_BASE = "https://api.github.com"
 
@@ -62,6 +69,33 @@ class GitHubClient:
         response = self._client.get(f"/repos/{owner}/{name}/issues/{issue_number}")
         response.raise_for_status()
         return self._parse_issue(response.json())
+
+    def fetch_issue_comments(
+        self,
+        repo: str,
+        issue_number: int,
+        *,
+        limit: int = 5,
+    ) -> list[GitHubComment]:
+        owner, name = parse_repo(repo)
+        response = self._client.get(
+            f"/repos/{owner}/{name}/issues/{issue_number}/comments",
+            params={"per_page": min(limit, 100), "sort": "created", "direction": "desc"},
+        )
+        response.raise_for_status()
+        comments: list[GitHubComment] = []
+        for item in response.json()[:limit]:
+            user = None
+            if isinstance(item.get("user"), dict):
+                user = item["user"].get("login")
+            comments.append(
+                GitHubComment(
+                    user=user,
+                    body=str(item.get("body") or ""),
+                    created_at=str(item.get("created_at") or "") or None,
+                )
+            )
+        return comments
 
     def fetch_recent_issues(
         self,

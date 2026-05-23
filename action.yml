@@ -31,6 +31,10 @@ inputs:
     description: Enable privacy/containment insight flags
     required: false
     default: "true"
+  llm_provider:
+    description: "LLM provider: grok, anthropic, or openai"
+    required: false
+    default: "grok"
 
 runs:
   using: composite
@@ -49,8 +53,11 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         XAI_API_KEY: ${{ env.XAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ env.ANTHROPIC_API_KEY }}
+        OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
       run: |
         ARGS="triage --repo ${{ inputs.repo }} --issue ${{ inputs.issue_number }} --json"
+        ARGS="$ARGS --llm-provider ${{ inputs.llm_provider }}"
         if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
         if [ "${{ inputs.mock }}" = "true" ]; then ARGS="$ARGS --mock"; fi
         if [ "${{ inputs.privacy_insight }}" = "true" ]; then ARGS="$ARGS --privacy-insight"; else ARGS="$ARGS --no-privacy-insight"; fi

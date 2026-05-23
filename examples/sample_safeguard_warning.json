@@ -1,0 +1,27 @@
+{
+  "safeguard": {
+    "score": 6.5,
+    "status": "review_recommended",
+    "triggered": [
+      {
+        "id": "credential_like_pattern",
+        "severity": "high",
+        "message": "Draft contains a credential-like token pattern (e.g. API key shape)."
+      },
+      {
+        "id": "low_relevance",
+        "severity": "medium",
+        "message": "Draft keyword overlap with issue is low (0.06, threshold 0.08).",
+        "metric": 0.06
+      }
+    ],
+    "metrics": {
+      "entropy": 4.2,
+      "char_count": 890,
+      "word_count": 140,
+      "repetition_ratio": 0.12,
+      "relevance_ratio": 0.06
+    },
+    "checks_run": ["entropy", "length_repetition", "patterns", "relevance"]
+  }
+}

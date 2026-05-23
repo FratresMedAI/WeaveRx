@@ -1,0 +1,24 @@
+Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset
+┌──────────────────────┬────────────────────────────────────────────────────────────┐
+│ Field                │ Value                                                      │
+├──────────────────────┼────────────────────────────────────────────────────────────┤
+│ Category             │ Reproducibility & Environment                              │
+│ Priority             │ HIGH                                                       │
+│ Impact               │ Environment or reproduction mismatch may be blocking...    │
+│ Duplicate likelihood │ [##--------] 15%                                           │
+│ Suggested labels     │ reproducibility, environment                               │
+│ Status               │ ready for review                                           │
+│ Sources              │ 2 excerpt(s) (use --verbose)                               │
+│ LLM                  │ mock / mock                                                │
+│ Safeguard score      │ 0.0 / 10                                                   │
+│ Safeguard status     │ CLEAN                                                      │
+└──────────────────────┴────────────────────────────────────────────────────────────┘
+
+╭─ Draft response ───────────────────────────────────────────────────────────────╮
+│ Hi @researcher-dev - thank you for taking the time to write this up.           │
+│ ...                                                                            │
+╰────────────────────────────────────────────────────────────────────────────────╯
+
+Dry-run mode - no changes were made to GitHub.
+
+<!-- screenshot: capture with `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock` -->
