@@ -46,7 +46,7 @@ weaverx = "weaverx.cli:app"
 packages = ["src/weaverx"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/weaverx", "README.md", "LICENSE", "CONTRIBUTING.md", "pyproject.toml"]
+include = ["src/weaverx", "README.md", "LICENSE", "CONTRIBUTING.md", "docs", "pyproject.toml"]
 
 [tool.ruff]
 target-version = "py311"

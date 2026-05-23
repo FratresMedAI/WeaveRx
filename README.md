@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/weaverx-hero.png" alt="WeaveRx — medical AI GitHub issue triage" width="900" />
+</p>
+
 # WeaveRx
 
 **Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
