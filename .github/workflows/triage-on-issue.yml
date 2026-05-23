@@ -1,0 +1,25 @@
+name: Triage on Issue
+
+on:
+  issues:
+    types: [opened, reopened]
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: WeaveRx analyze (dry-run)
+        uses: ./
+        with:
+          repo: ${{ github.repository }}
+          issue_number: ${{ github.event.issue.number }}
+          dry_run: "true"
+          post_comment: "false"
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}

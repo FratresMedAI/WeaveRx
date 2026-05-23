@@ -1,0 +1,40 @@
+{
+  "repo": "Project-MONAI/MONAI",
+  "issue": {
+    "number": 42,
+    "title": "Unable to reproduce nnU-Net training results on BraTS subset",
+    "url": "https://github.com/example/med-ai/issues/42",
+    "author": "researcher-dev",
+    "labels": ["question"]
+  },
+  "analysis": {
+    "category": "reproducibility-environment",
+    "priority": "high",
+    "impact_summary": "Benchmark reproduction gap may affect trust in reported BraTS metrics; likely environment or preprocessing mismatch.",
+    "duplicate_likelihood": 0.15,
+    "suggested_labels": ["reproducibility", "nnunet", "question"],
+    "draft_response": "Hi @researcher-dev — thank you for taking the time to write this up.\n\nReproducibility questions like this are so valuable for the medical AI community...",
+    "privacy_flags": [],
+    "reasoning": "Issue describes nnU-Net/MONAI repro on BraTS with version details—classic reproducibility category."
+  },
+  "category_display": "Reproducibility & Environment",
+  "duplicate_matches": [],
+  "heuristic_duplicate_score": 0.0,
+  "draft_response": "Hi @researcher-dev — thank you for taking the time to write this up.\n\nReproducibility questions like this are so valuable for the medical AI community. Could you share your MONAI and nnU-Net versions, CUDA/PyTorch stack, and the exact BraTS preprocessing steps you used?",
+  "safeguard": {
+    "score": 0.0,
+    "status": "clean",
+    "triggered": [],
+    "metrics": {
+      "entropy": 4.69,
+      "char_count": 608,
+      "word_count": 95,
+      "repetition_ratio": 0.2,
+      "relevance_ratio": 0.27
+    },
+    "checks_run": ["entropy", "length_repetition", "patterns", "relevance"]
+  },
+  "dry_run": true,
+  "posted_comment": false,
+  "applied_labels": []
+}

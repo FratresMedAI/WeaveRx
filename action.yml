@@ -1,0 +1,75 @@
+name: WeaveRx Triage
+description: Supportive AI-powered issue triage for medical AI GitHub repositories
+branding:
+  icon: heart
+  color: blue
+
+inputs:
+  repo:
+    description: Repository in owner/name format
+    required: true
+  issue_number:
+    description: Issue number to triage
+    required: true
+  dry_run:
+    description: Analyze only; do not write to GitHub
+    required: false
+    default: "true"
+  mock:
+    description: Use offline mock mode (no external API calls)
+    required: false
+    default: "false"
+  post_comment:
+    description: Post the draft triage comment (requires explicit true)
+    required: false
+    default: "false"
+  apply_labels:
+    description: Apply suggested labels (requires explicit true)
+    required: false
+    default: "false"
+  privacy_insight:
+    description: Enable privacy/containment insight flags
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install WeaveRx
+      shell: bash
+      run: pip install .
+
+    - name: Run triage
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        XAI_API_KEY: ${{ env.XAI_API_KEY }}
+      run: |
+        ARGS="triage --repo ${{ inputs.repo }} --issue ${{ inputs.issue_number }} --json"
+        if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+        if [ "${{ inputs.mock }}" = "true" ]; then ARGS="$ARGS --mock"; fi
+        if [ "${{ inputs.privacy_insight }}" = "true" ]; then ARGS="$ARGS --privacy-insight"; else ARGS="$ARGS --no-privacy-insight"; fi
+        if [ "${{ inputs.post_comment }}" = "true" ]; then ARGS="$ARGS --post-comment --confirm"; fi
+        if [ "${{ inputs.apply_labels }}" = "true" ]; then ARGS="$ARGS --apply-labels --confirm"; fi
+        weaverx $ARGS | tee triage-output.json
+
+    - name: Upload triage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: weaverx-triage-${{ inputs.issue_number }}
+        path: triage-output.json
+
+    - name: Job summary
+      shell: bash
+      run: |
+        echo "## WeaveRx Triage" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo '```json' >> "$GITHUB_STEP_SUMMARY"
+        head -c 4000 triage-output.json >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo '```' >> "$GITHUB_STEP_SUMMARY"
