@@ -30,5 +30,10 @@ jobs:
       - name: Mypy
         run: mypy src/weaverx
 
-      - name: Pytest
-        run: pytest
+      - name: Pytest with coverage
+        run: pytest --cov=weaverx --cov-report=term-missing --cov-fail-under=75
+
+      - name: Dependency audit
+        run: |
+          pip install pip-audit
+          pip-audit --strict

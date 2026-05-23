@@ -8,6 +8,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from rich.console import Console
+from rich.panel import Panel
 from rich.terminal_theme import MONOKAI
 
 from weaverx.cli import render_triage_result
@@ -99,6 +100,36 @@ def _export_text(result, txt_path: Path, *, verbose: bool = False) -> None:
     txt_path.write_text(console.export_text(clear=False), encoding="utf-8")
 
 
+def _export_action_log_png(png_path: Path) -> None:
+    """Render a GitHub Actions-style dry-run log for README docs."""
+    console = Console(
+        record=True,
+        width=100,
+        force_terminal=True,
+        color_system="truecolor",
+    )
+    console.print(
+        "[bold cyan]Run[/bold cyan] weaverx triage --repo Project-MONAI/MONAI "
+        "--issue 42 --mock --dry-run"
+    )
+    console.print("[dim]env: dry_run=true[/dim]")
+    console.print("")
+    clean_result = _build_clean_result()
+    render_triage_result(clean_result, output_console=console)
+    console.print("")
+    console.print(
+        Panel.fit(
+            "[green]Dry-run complete[/green] — no comment posted to GitHub.",
+            title="GitHub Actions",
+            border_style="blue",
+        )
+    )
+    svg_path = png_path.with_suffix(".svg")
+    console.save_svg(str(svg_path), title="WeaveRx GitHub Action", theme=MONOKAI)
+    _svg_to_png(svg_path, png_path)
+    svg_path.unlink(missing_ok=True)
+
+
 def main() -> int:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     captures_dir = REPO_ROOT / "examples" / "captures"
@@ -117,6 +148,10 @@ def main() -> int:
     print(f"Writing {warning_path}")
     _export_png(warning_result, warning_path)
     _export_text(warning_result, captures_dir / "safeguard-warning.txt")
+
+    action_path = OUTPUT_DIR / "github-action-dry-run.png"
+    print(f"Writing {action_path}")
+    _export_action_log_png(action_path)
 
     print("Done.")
     return 0

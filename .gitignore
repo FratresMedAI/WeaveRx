@@ -5,8 +5,10 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+.coverage
 .venv/
 venv/
 dist/
 build/
+site/
 triage-output.json

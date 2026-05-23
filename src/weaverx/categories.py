@@ -180,8 +180,7 @@ def category_prompt_block() -> str:
     for cat in MED_AI_CATEGORIES:
         labels = ", ".join(cat.suggested_labels)
         lines.append(
-            f"- **{cat.display_name}** (`{cat.slug}`): {cat.description} "
-            f"[labels: {labels}]"
+            f"- **{cat.display_name}** (`{cat.slug}`): {cat.description} [labels: {labels}]"
         )
     return "\n".join(lines)
 

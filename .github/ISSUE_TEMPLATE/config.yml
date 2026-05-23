@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/FratresMedAI/WeaveRx/security/advisories/new
+    about: Report security issues privately — do not use public issues
+  - name: Support expectations
+    url: https://github.com/FratresMedAI/WeaveRx/blob/master/SUPPORT.md
+    about: How to get help and what to expect
+  - name: Ethics and responsible use
+    url: https://github.com/FratresMedAI/WeaveRx/blob/master/ETHICS.md
+    about: Not for clinical use; human review required

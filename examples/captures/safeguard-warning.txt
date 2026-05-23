@@ -28,3 +28,4 @@
 +----------------------- (use --verbose for full text) ------------------------+
 Safeguard: high risk — review draft carefully before posting.
 Dry-run mode - no changes were made to GitHub.
+WeaveRx drafts require human review - not for clinical use.

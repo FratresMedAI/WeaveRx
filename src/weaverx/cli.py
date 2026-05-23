@@ -146,9 +146,7 @@ def render_triage_result(
     )
 
     if result.safeguard is not None and result.safeguard.status == "high_risk":
-        out.print(
-            "[yellow]Safeguard: high risk — review draft carefully before posting.[/yellow]"
-        )
+        out.print("[yellow]Safeguard: high risk — review draft carefully before posting.[/yellow]")
 
     if result.dry_run:
         out.print("[dim]Dry-run mode - no changes were made to GitHub.[/dim]")
@@ -156,6 +154,8 @@ def render_triage_result(
         out.print("[green]Posted triage comment to GitHub.[/green]")
     if result.applied_labels:
         out.print(f"[green]Applied labels:[/green] {', '.join(result.applied_labels)}")
+
+    out.print("[dim]WeaveRx drafts require human review - not for clinical use.[/dim]")
 
 
 def _truncate(text: str, max_len: int) -> str:
@@ -237,8 +237,7 @@ def triage_command(
         typer.Option(
             "--llm-provider",
             help=(
-                "LLM provider: grok, anthropic, or openai "
-                "(default: grok or WEAVERX_LLM_PROVIDER)."
+                "LLM provider: grok, anthropic, or openai (default: grok or WEAVERX_LLM_PROVIDER)."
             ),
         ),
     ] = None,

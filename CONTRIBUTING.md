@@ -2,25 +2,34 @@
 
 Thank you for helping improve WeaveRx for the medical AI open-source community.
 
+## Community standards
+
+- Read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+- Review [ETHICS.md](ETHICS.md) for responsible-use constraints in this domain.
+- Report security issues privately via [SECURITY.md](SECURITY.md) — never in public issues.
+
 ## Development setup
 
 ```bash
 git clone https://github.com/FratresMedAI/WeaveRx.git
 cd WeaveRx
 pip install -e ".[dev]"
+pre-commit install   # optional but recommended
 ```
 
 Run the quality checks before opening a pull request:
 
 ```bash
-ruff check .
+pre-commit run --all-files   # or: ruff check .
 mypy src/weaverx
-pytest
+pytest --cov=weaverx
 ```
 
 Most tests run offline with `--mock` data. Optional live tests are marked `@pytest.mark.network`.
 
 ## Pull request expectations
+
+Use the [pull request template](.github/PULL_REQUEST_TEMPLATE.md). In summary:
 
 - Keep changes focused and explain the **why** in the PR description.
 - Match existing code style (type hints, ruff/mypy clean).
@@ -37,12 +46,16 @@ WeaveRx is **human-in-the-loop** tooling:
 
 ## Reporting issues
 
-Use the GitHub issue template for bugs and feature requests. Include:
+Use the GitHub issue templates:
 
-- WeaveRx version (`weaverx --version`)
-- Command you ran (redact tokens)
-- Expected vs actual behavior
+- [Bug report](.github/ISSUE_TEMPLATE/bug_report.yml)
+- [Feature request](.github/ISSUE_TEMPLATE/feature_request.yml)
+- [WeaveRx feedback](.github/ISSUE_TEMPLATE/triage_feedback.yml)
 
-## Code of conduct
+Include WeaveRx version (`weaverx --version`), the command you ran (redact tokens), and expected vs actual behavior.
 
-Be respectful and constructive. WeaveRx serves researchers, clinicians, and maintainers working under real regulatory and reproducibility constraints.
+See [SUPPORT.md](SUPPORT.md) for response expectations.
+
+## Releases
+
+Maintainers: see [docs/releasing.md](docs/releasing.md) for tagging and GitHub Release workflow.

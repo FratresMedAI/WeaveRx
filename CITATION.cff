@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: WeaveRx
+message: "If you use WeaveRx in research or tooling evaluations, please cite:"
+type: software
+authors:
+  - name: WeaveRx Contributors
+repository-code: "https://github.com/FratresMedAI/WeaveRx"
+url: "https://github.com/FratresMedAI/WeaveRx"
+license: MIT
+version: 0.1.0
+keywords:
+  - medical-ai
+  - github-triage
+  - issue-triage
+preferred-citation: |
+  WeaveRx Contributors. (2026). WeaveRx: Medical AI GitHub issue triage with auditable drafts and local safeguards (Version 0.1.0) [Computer software]. https://github.com/FratresMedAI/WeaveRx

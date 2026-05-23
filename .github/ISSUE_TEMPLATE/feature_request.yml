@@ -1,0 +1,51 @@
+name: Feature request
+description: Suggest an improvement to WeaveRx
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem and proposed solution. Consider safety impact on dry-run defaults and human-in-the-loop workflows.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What pain point does this address?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+
+  - type: dropdown
+    id: safety_impact
+    attributes:
+      label: Safety impact
+      options:
+        - None expected
+        - May affect dry-run / confirm gates
+        - May affect safeguard behavior
+        - May affect privacy / PHI handling
+        - Unsure — needs maintainer review
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: I understand WeaveRx is maintainer tooling, not for clinical use
+          required: true

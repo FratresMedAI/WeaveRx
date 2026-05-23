@@ -1,0 +1,55 @@
+name: Bug report
+description: Report unexpected behavior in WeaveRx (redact secrets and PHI)
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do **not** paste API keys, patient data, or PHI. Use `--mock` when possible to reproduce offline.
+
+  - type: input
+    id: version
+    attributes:
+      label: WeaveRx version
+      description: Output of `weaverx --version`
+      placeholder: "weaverx 0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.11.8"
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or workflow
+      description: What you ran (redact secrets)
+      placeholder: "weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Optional; redact sensitive content

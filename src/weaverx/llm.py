@@ -350,8 +350,7 @@ def _infer_mock_analysis(
             "Issue may involve sensitive clinical data handling that needs careful containment.",
         )
     if any(
-        k in lowered
-        for k in ("dataset", "download", "licens", "chexpert", "403", "data access")
+        k in lowered for k in ("dataset", "download", "licens", "chexpert", "403", "data access")
     ):
         return (
             "dataset-access-licensing",
@@ -411,8 +410,7 @@ def _infer_mock_analysis(
             "Environment or reproduction mismatch may be blocking benchmark trust.",
         )
     if any(
-        k in lowered
-        for k in ("accuracy", "dice", "auc", "sensitivity", "pathology", "subgroup")
+        k in lowered for k in ("accuracy", "dice", "auc", "sensitivity", "pathology", "subgroup")
     ):
         return (
             "model-performance-pathology",

@@ -1,0 +1,50 @@
+site_name: WeaveRx
+site_description: Medical AI GitHub issue triage with auditable drafts and local safeguards
+site_url: https://github.com/FratresMedAI/WeaveRx
+repo_url: https://github.com/FratresMedAI/WeaveRx
+repo_name: FratresMedAI/WeaveRx
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      accent: green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Configuration: configuration.md
+  - Reference:
+      - Categories: reference/categories.md
+      - Safeguards: reference/safeguards.md
+      - CLI: reference/cli.md
+      - LLM providers: reference/llm-providers.md
+  - Releasing: releasing.md
+  - Documentation setup: setup.md
+  - Screenshots: screenshots/README.md
+  - Community:
+      - Contributing: https://github.com/FratresMedAI/WeaveRx/blob/master/CONTRIBUTING.md
+      - Ethics: https://github.com/FratresMedAI/WeaveRx/blob/master/ETHICS.md
+      - Security: https://github.com/FratresMedAI/WeaveRx/blob/master/SECURITY.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink: true
+
+docs_dir: docs

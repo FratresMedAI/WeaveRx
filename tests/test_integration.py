@@ -117,9 +117,7 @@ def test_litellm_provider_parses_json() -> None:
         user="u",
     )
     mock_response = MagicMock()
-    mock_response.choices = [
-        MagicMock(message=MagicMock(content=json.dumps(LLM_RESPONSE)))
-    ]
+    mock_response.choices = [MagicMock(message=MagicMock(content=json.dumps(LLM_RESPONSE)))]
 
     with patch("weaverx.llm.litellm.completion", return_value=mock_response):
         provider = LiteLLMProvider(provider="grok", model="xai/grok-2-latest", api_key="test-key")
