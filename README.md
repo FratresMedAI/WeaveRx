@@ -9,6 +9,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
 </p>
 
+**Contents:** [Install](#install) · [See it in action](#see-it-in-action) · [Quickstart](#quickstart) · [LLM providers](#llm-providers) · [Draft safeguards](#draft-safeguards)
+
 # WeaveRx
 
 **Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
@@ -19,7 +21,7 @@ Built for medical AI maintainers, research groups, and hospital OSS teams who ne
 
 ### Install
 
-PyPI is on the [near-term roadmap](#roadmap-near-term). Today, install from source or a GitHub release:
+Requires Python 3.11+. PyPI is on the [near-term roadmap](#roadmap-near-term). Today, install from source or a GitHub release:
 
 ```bash
 # Latest tagged release
@@ -35,44 +37,49 @@ pip install -e ".[dev]"
 
 ## See it in action
 
-### CLI triage (mock — no API keys)
+**Command (no API keys):** `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock`
 
-Command: `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock`
+### Clean triage
 
-```
-Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset
-┌──────────────────────┬──────────────────────────────────────────────────┐
-│ Category             │ Reproducibility & Environment                    │
-│ Priority             │ HIGH                                             │
-│ Status               │ ready for review                                 │
-│ Sources              │ 2 excerpt(s) (use --verbose)                     │
-│ LLM                  │ mock / mock                                      │
-│ Safeguard score      │ 0.0 / 10                                         │
-│ Safeguard status     │ CLEAN                                            │
-└──────────────────────┴──────────────────────────────────────────────────┘
-╭─ Draft response ─────────────────────────────────────────────────────────╮
-│ Hi @researcher-dev - thank you for taking the time to write this up.     │
-│ ... checklist: PyTorch, CUDA, MONAI/nnU-Net versions, preprocessing ...  │
-╰──────────────────────────────────────────────────────────────────────────╯
-```
+<p align="center">
+  <img src="docs/screenshots/triage-clean.png"
+       alt="WeaveRx CLI: category, status, sources, clean safeguard, draft panel"
+       width="820" />
+</p>
 
-Full terminal capture: [`examples/captured_triage_clean.txt`](examples/captured_triage_clean.txt)
+Typical output: reproducibility category, `ready_for_review` status, source excerpts,
+`CLEAN` safeguard (0.0/10), and a postable draft in the green panel.
 
-### Safeguard warning (when a draft looks risky)
+<details>
+<summary>Text capture (accessibility / no images)</summary>
 
-Advisory only — you still choose whether to post. Example when credential-like patterns or repetition fire:
+See [`examples/captures/triage-clean.txt`](examples/captures/triage-clean.txt).
 
-```
-│ Safeguard score      │ 8.0 / 10                                         │
-│ Safeguard status     │ HIGH RISK                                        │
-│ Safeguard flags      │ credential_like_pattern, heavy_repetition        │
-╭─ Draft response ─────────────────────────────────────────────────────────╮
-│ (panel border turns yellow/red — review before posting)                  │
-╰──────────────────────────────────────────────────────────────────────────╯
-Safeguard: high risk — review draft carefully before posting.
-```
+</details>
 
-Full capture: [`examples/captured_safeguard_warning.txt`](examples/captured_safeguard_warning.txt) · JSON: [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json)
+### Safeguard warning
+
+Safeguard checks are **advisory** — they flag drafts for review; they never auto-block posting.
+
+<p align="center">
+  <img src="docs/screenshots/safeguard-warning.png"
+       alt="WeaveRx CLI: HIGH RISK safeguard flags and red draft panel border"
+       width="820" />
+</p>
+
+When heuristics fire (e.g. credential-like patterns, heavy repetition), the table shows
+**Safeguard flags**, status escalates to `HIGH RISK` / `REVIEW RECOMMENDED`, and the draft
+panel border turns yellow or red.
+
+<details>
+<summary>Text capture + JSON</summary>
+
+- Text: [`examples/captures/safeguard-warning.txt`](examples/captures/safeguard-warning.txt)
+- JSON: [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json)
+
+</details>
+
+**Try it:** `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock -v`
 
 ---
 
@@ -124,29 +131,7 @@ A typical `--json` result (abbreviated draft text):
 }
 ```
 
-Full JSON: [`examples/sample_triage_output.json`](examples/sample_triage_output.json)
-
-When safeguards flag a draft:
-
-```json
-"safeguard": {
-  "score": 6.5,
-  "status": "review_recommended",
-  "triggered": [
-    {
-      "id": "credential_like_pattern",
-      "severity": "high",
-      "message": "Draft contains a credential-like token pattern (e.g. API key shape)."
-    },
-    {
-      "id": "low_relevance",
-      "severity": "medium",
-      "message": "Draft keyword overlap with issue is low (0.06, threshold 0.08).",
-      "metric": 0.06
-    }
-  ]
-}
-```
+Full JSON: [`examples/sample_triage_output.json`](examples/sample_triage_output.json). Safeguard examples: [Safeguard warning](#safeguard-warning) above and [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json).
 
 ---
 
@@ -237,31 +222,18 @@ weaverx triage --repo Project-MONAI/MONAI --recent 5 --mock
 
 ---
 
-## What a real triage looks like
+## LLM providers
 
-**Repo:** [Project-MONAI/MONAI](https://github.com/Project-MONAI/MONAI)  
-**Issue:** reproducibility question about nnU-Net on BraTS (mock issue #42)
+| Provider | CLI | API key env | Default model |
+|---|---|---|---|
+| Grok | `--llm-provider grok` | `XAI_API_KEY` | `xai/grok-2-latest` |
+| Anthropic | `--llm-provider anthropic` | `ANTHROPIC_API_KEY` | `anthropic/claude-3-5-sonnet-20241022` |
+| OpenAI-compatible | `--llm-provider openai` | `OPENAI_API_KEY` | `openai/gpt-4o` |
 
-| Field | Typical result |
-|---|---|
-| Category | Reproducibility & Environment |
-| Priority | high |
-| Status | `ready_for_review` (dry-run) |
-| Sources | Issue title + body excerpts citing nnU-Net / CUDA / MONAI versions |
-| Safeguard | `clean` (score 0–2.9) for normal prose drafts |
-| Draft | Warm, concrete checklist (environment snapshot, preprocessing, seed/fold) |
+Override model globally: `WEAVERX_LLM_MODEL=anthropic/claude-3-5-haiku-20241022`  
+Override provider default: `WEAVERX_LLM_PROVIDER=anthropic`
 
-CLI layout (see [`examples/sample_triage_cli.txt`](examples/sample_triage_cli.txt)):
-
-```
-Category             Reproducibility & Environment
-Priority             HIGH
-Status               ready for review
-Sources              2 excerpt(s) (use --verbose)
-Safeguard status     CLEAN
-```
-
-Run it yourself: `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock -v`
+All providers return the same structured JSON schema (`TriageAnalysis` + `sources`). Copy-paste commands: [`examples/llm_provider_examples.md`](examples/llm_provider_examples.md).
 
 ---
 
@@ -277,21 +249,6 @@ Run it yourself: `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock -v
 | **Bug** | Crashes, incorrect outputs |
 | **Feature/Integration Request** | New capabilities, framework hooks |
 | **Documentation** | Missing or unclear tutorials and API docs |
-
----
-
-## LLM providers
-
-| Provider | CLI | API key env | Default model |
-|---|---|---|---|
-| Grok | `--llm-provider grok` | `XAI_API_KEY` | `xai/grok-2-latest` |
-| Anthropic | `--llm-provider anthropic` | `ANTHROPIC_API_KEY` | `anthropic/claude-3-5-sonnet-20241022` |
-| OpenAI-compatible | `--llm-provider openai` | `OPENAI_API_KEY` | `openai/gpt-4o` |
-
-Override model globally: `WEAVERX_LLM_MODEL=anthropic/claude-3-5-haiku-20241022`  
-Override provider default: `WEAVERX_LLM_PROVIDER=anthropic`
-
-All providers return the same structured JSON schema (`TriageAnalysis` + `sources`).
 
 ---
 
@@ -330,7 +287,7 @@ After generating a draft, WeaveRx runs **fast, local-only** checks — **no LLM 
 
 Disable: `--no-safeguards` or `WEAVERX_SAFEGUARDS=0`. Tune: `WEAVERX_SAFEGUARD_ENTROPY_MAX`, `WEAVERX_SAFEGUARD_MAX_CHARS`.
 
-**What it looks like when triggered:** see [Safeguard warning](#safeguard-warning-when-a-draft-looks-risky) above and [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json).
+**What it looks like when triggered:** see [Safeguard warning](#safeguard-warning) above and [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json).
 
 Complements privacy keyword scanning. [Safire](https://github.com/FratresMedAI/Safire) is a separate path for deeper audit tooling.
 

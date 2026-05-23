@@ -1,4 +1,4 @@
-﻿    Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset    
+    Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset    
 +------------------------------------------------------------------------------+
 | Field                | Value                                                 |
 |----------------------+-------------------------------------------------------|

@@ -1,0 +1,30 @@
+    Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset    
++------------------------------------------------------------------------------+
+| Field                | Value                                                 |
+|----------------------+-------------------------------------------------------|
+| Category             | Reproducibility & Environment                         |
+| Priority             | HIGH                                                  |
+| Impact               | Environment or reproduction mismatch may be blocking  |
+|                      | benchmark trust.                                      |
+| Duplicate likelihood | [----------] 5%                                       |
+| Suggested labels     | reproducibility, environment                          |
+| Status               | ready for review                                      |
+| Sources              | 2 excerpt(s) (use --verbose)                          |
+| LLM                  | mock / mock                                           |
+| Safeguard score      | 8.0 / 10                                              |
+| Safeguard status     | HIGH RISK                                             |
+| Safeguard flags      | heavy_repetition, credential_like_pattern,            |
+|                      | low_relevance                                         |
++------------------------------------------------------------------------------+
++------------------------------- Draft response -------------------------------+
+| Hi @researcher-dev - please set api_key=abcd1234efgh5678 in your             |
+| environment.                                                                 |
+|                                                                              |
+| Thanks for reporting this reproduction issue. Thanks for reporting this      |
+| reproduction issue. Thanks for reporting this reproduction issue. Thanks for |
+| reporting this reproduction issue. Thanks for reporting this reproduction    |
+| issue. Thanks for reporting this reproduction issue. Thanks for reporting    |
+| this reproduction iss...                                                     |
++----------------------- (use --verbose for full text) ------------------------+
+Safeguard: high risk — review draft carefully before posting.
+Dry-run mode - no changes were made to GitHub.

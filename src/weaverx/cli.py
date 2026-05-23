@@ -68,7 +68,13 @@ def _render_duplicate_bar(score: float) -> Text:
     return Text(f"[{bar}] {score:.0%}", style=style)
 
 
-def render_triage_result(result: TriageResult, *, verbose: bool = False) -> None:
+def render_triage_result(
+    result: TriageResult,
+    *,
+    verbose: bool = False,
+    output_console: Console | None = None,
+) -> None:
+    out = output_console or console
     analysis = result.analysis
     cat = CATEGORY_BY_SLUG.get(analysis.category)
     category_name = cat.display_name if cat else analysis.category
@@ -123,14 +129,14 @@ def render_triage_result(result: TriageResult, *, verbose: bool = False) -> None
             flags = ", ".join(finding.id for finding in sg.triggered)
             table.add_row("Safeguard flags", flags)
 
-    console.print(table)
+    out.print(table)
 
     draft_border = "green"
     if result.safeguard is not None:
         draft_border = SAFEGUARD_STATUS_STYLE.get(result.safeguard.status, "green")
 
     draft_preview = result.draft_response if verbose else _truncate(result.draft_response, 400)
-    console.print(
+    out.print(
         Panel(
             draft_preview,
             title="Draft response",
@@ -140,16 +146,16 @@ def render_triage_result(result: TriageResult, *, verbose: bool = False) -> None
     )
 
     if result.safeguard is not None and result.safeguard.status == "high_risk":
-        console.print(
+        out.print(
             "[yellow]Safeguard: high risk — review draft carefully before posting.[/yellow]"
         )
 
     if result.dry_run:
-        console.print("[dim]Dry-run mode - no changes were made to GitHub.[/dim]")
+        out.print("[dim]Dry-run mode - no changes were made to GitHub.[/dim]")
     if result.posted_comment:
-        console.print("[green]Posted triage comment to GitHub.[/green]")
+        out.print("[green]Posted triage comment to GitHub.[/green]")
     if result.applied_labels:
-        console.print(f"[green]Applied labels:[/green] {', '.join(result.applied_labels)}")
+        out.print(f"[green]Applied labels:[/green] {', '.join(result.applied_labels)}")
 
 
 def _truncate(text: str, max_len: int) -> str:
