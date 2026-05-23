@@ -42,6 +42,7 @@ jobs:
   pypi:
     needs: release
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       id-token: write
     steps:
