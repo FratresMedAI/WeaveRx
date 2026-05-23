@@ -13,7 +13,7 @@ body:
     attributes:
       label: WeaveRx version
       description: Output of `weaverx --version`
-      placeholder: "weaverx 0.1.0"
+      placeholder: "weaverx 0.1.1"
     validations:
       required: true
 

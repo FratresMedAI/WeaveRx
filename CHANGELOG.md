@@ -7,21 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-23
+
 ### Added
 
+- PyPI publishing via GitHub Release workflow (trusted publishing)
+- GitHub Pages documentation site at [fratresmedai.github.io/WeaveRx](https://fratresmedai.github.io/WeaveRx/)
 - Governance files: CODE_OF_CONDUCT, SECURITY, SUPPORT, ETHICS
 - Issue and pull request templates
 - MkDocs documentation scaffold
 - Pre-commit hooks, Dependabot, pip-audit in CI
 - pytest coverage gate in CI
-- CHANGELOG and GitHub Release workflow (artifacts only)
 - CLI human-review disclaimer on triage output
 - Configuration reference in docs
+- GitHub Action dry-run screenshot in README
 
 ### Changed
 
 - README restructured for scanability (features, quickstart, demo first)
-- CONTRIBUTING expanded with community and release links
+- Repository description and GitHub topics updated
+- Badges row moved below title for first-impression polish
 
 ## [0.1.0] - 2026-05-23
 
@@ -35,5 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock mode for offline demos and CI
 - Human-in-the-loop defaults (`--dry-run`, `--confirm` for writes)
 
-[Unreleased]: https://github.com/FratresMedAI/WeaveRx/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/FratresMedAI/WeaveRx/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.1
 [0.1.0]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.0

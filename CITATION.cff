@@ -7,10 +7,10 @@ authors:
 repository-code: "https://github.com/FratresMedAI/WeaveRx"
 url: "https://github.com/FratresMedAI/WeaveRx"
 license: MIT
-version: 0.1.0
+version: 0.1.1
 keywords:
   - medical-ai
   - github-triage
   - issue-triage
 preferred-citation: |
-  WeaveRx Contributors. (2026). WeaveRx: Medical AI GitHub issue triage with auditable drafts and local safeguards (Version 0.1.0) [Computer software]. https://github.com/FratresMedAI/WeaveRx
+  WeaveRx Contributors. (2026). WeaveRx: Medical AI GitHub issue triage with auditable drafts and local safeguards (Version 0.1.1) [Computer software]. https://github.com/FratresMedAI/WeaveRx

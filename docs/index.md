@@ -11,6 +11,8 @@ WeaveRx classifies MONAI, nnU-Net, and related project issues — reproducibilit
 - [Examples](https://github.com/FratresMedAI/WeaveRx/tree/master/examples) — JSON samples and CLI captures
 - [Ethics](https://github.com/FratresMedAI/WeaveRx/blob/master/ETHICS.md) — not for clinical use; human review required
 
+Install: `pip install weaverx`
+
 ## See it in action
 
 ![Clean triage screenshot](screenshots/triage-clean.png)
@@ -28,7 +30,7 @@ Text fallbacks: [examples/captures/](https://github.com/FratresMedAI/WeaveRx/tre
 Dry-run triage on new issues via [action.yml](https://github.com/FratresMedAI/WeaveRx/blob/master/action.yml):
 
 ```yaml
-- uses: FratresMedAI/WeaveRx@v0.1.0
+- uses: FratresMedAI/WeaveRx@v0.1.1
   with:
     repo: ${{ github.repository }}
     issue_number: ${{ github.event.issue.number }}

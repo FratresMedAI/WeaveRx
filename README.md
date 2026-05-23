@@ -2,17 +2,6 @@
   <img src="docs/weaverx-hero.png" alt="WeaveRx — medical AI GitHub issue triage" width="900" />
 </p>
 
-<p align="center">
-  <a href="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml"><img src="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-  <a href="https://github.com/FratresMedAI/WeaveRx/releases"><img src="https://img.shields.io/github/v/release/FratresMedAI/WeaveRx?label=release" alt="Release" /></a>
-  <img src="https://img.shields.io/badge/python-3.11%20|%203.12-blue" alt="Python" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
-  <a href="https://github.com/FratresMedAI/WeaveRx/stargazers"><img src="https://img.shields.io/github/stars/FratresMedAI/WeaveRx?style=social" alt="GitHub stars" /></a>
-  <a href="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/coverage-75%25+-green" alt="Coverage" /></a>
-</p>
-
-**Contents:** [Features](#features) · [Quickstart](#quickstart) · [See it in action](#see-it-in-action) · [Installation](#installation) · [Safety](#safety-and-responsible-use) · [Reference](#reference) · [Docs](docs/index.md)
-
 # WeaveRx
 
 **Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
@@ -20,6 +9,18 @@
 WeaveRx helps maintainers triage issues faster — reproducibility blockers, dataset access, subgroup performance, privacy/DICOM, and clinical validation requests — with **sources** (issue excerpts that grounded the decision) and **safeguard scores** (local heuristics, no extra LLM calls).
 
 Built for medical AI maintainers and research groups who need practical tooling — not a gatekeeper bot.
+
+<p align="center">
+  <a href="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml"><img src="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://pypi.org/project/weaverx/"><img src="https://img.shields.io/pypi/v/weaverx?label=PyPI" alt="PyPI" /></a>
+  <a href="https://github.com/FratresMedAI/WeaveRx/releases"><img src="https://img.shields.io/github/v/release/FratresMedAI/WeaveRx?label=release" alt="Release" /></a>
+  <img src="https://img.shields.io/badge/python-3.11%20|%203.12-blue" alt="Python" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
+  <a href="https://github.com/FratresMedAI/WeaveRx/stargazers"><img src="https://img.shields.io/github/stars/FratresMedAI/WeaveRx?style=social" alt="GitHub stars" /></a>
+  <a href="https://fratresmedai.github.io/WeaveRx/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs" /></a>
+</p>
+
+**Contents:** [Features](#features) · [Quickstart](#quickstart) · [See it in action](#see-it-in-action) · [Installation](#installation) · [Safety](#safety-and-responsible-use) · [Reference](#reference) · [Docs](https://fratresmedai.github.io/WeaveRx/)
 
 ---
 
@@ -138,17 +139,25 @@ Full JSON: [`examples/sample_triage_output.json`](examples/sample_triage_output.
 
 ## Installation
 
-PyPI is on the [near-term roadmap](#roadmap-near-term). Install from a GitHub release or source today:
+```bash
+pip install weaverx
+```
+
+Or install from GitHub:
 
 ```bash
-# Latest tagged release
-pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.0
+pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.1
+```
 
-# Contributors / local dev
+Contributors / local dev:
+
+```bash
 git clone https://github.com/FratresMedAI/WeaveRx.git
 cd WeaveRx
 pip install -e ".[dev]"
 ```
+
+Documentation: [fratresmedai.github.io/WeaveRx](https://fratresmedai.github.io/WeaveRx/)
 
 ---
 
@@ -173,7 +182,7 @@ Read more: [`ETHICS.md`](ETHICS.md) · [`SECURITY.md`](SECURITY.md) · [`SUPPORT
 Dry-run triage when issues are opened:
 
 ```yaml
-- uses: FratresMedAI/WeaveRx@v0.1.0
+- uses: FratresMedAI/WeaveRx@v0.1.1
   with:
     repo: ${{ github.repository }}
     issue_number: ${{ github.event.issue.number }}
@@ -273,9 +282,9 @@ If you use WeaveRx in research or evaluations, cite via [`CITATION.cff`](CITATIO
 
 ## Roadmap (near-term)
 
-1. **PyPI publish** — `pip install weaverx` (install from [release tag](https://github.com/FratresMedAI/WeaveRx/releases) today)
-2. **Embedding-based duplicate detection** — optional `weaverx[embeddings]` extra
-3. **PR triage mode** — `--pr` for pull request review drafts
+1. **Embedding-based duplicate detection** — optional `weaverx[embeddings]` extra
+2. **PR triage mode** — `--pr` for pull request review drafts
+3. **Expanded provider presets** — more medical-AI-tuned prompt templates
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
