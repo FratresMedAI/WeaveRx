@@ -1,0 +1,29 @@
+﻿    Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset    
++------------------------------------------------------------------------------+
+| Field                | Value                                                 |
+|----------------------+-------------------------------------------------------|
+| Category             | Reproducibility & Environment                         |
+| Priority             | HIGH                                                  |
+| Impact               | Environment or reproduction mismatch may be blocking  |
+|                      | benchmark trust.                                      |
+| Duplicate likelihood | [----------] 5%                                       |
+| Suggested labels     | reproducibility, environment                          |
+| Status               | ready for review                                      |
+| Sources              | 2 excerpt(s) (use --verbose)                          |
+| LLM                  | mock / mock                                           |
+| Safeguard score      | 0.0 / 10                                              |
+| Safeguard status     | CLEAN                                                 |
++------------------------------------------------------------------------------+
++------------------------------- Draft response -------------------------------+
+| Hi @researcher-dev - thank you for taking the time to write this up.         |
+|                                                                              |
+| Environment or reproduction mismatch may be blocking benchmark trust.        |
+|                                                                              |
+| Reproducibility is the bedrock of medical AI trust. Offer a gentle           |
+| checklist: versions, seeds, config files, and minimal repro steps.           |
+|                                                                              |
+| A few things that often help us untangle medical AI reproduction issues:     |
+|                                                                              |
+| 1. **Environment snapshot** - PyTorch, CUDA, MO...                           |
++----------------------- (use --verbose for full text) ------------------------+
+Dry-run mode - no changes were made to GitHub.

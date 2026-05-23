@@ -2,6 +2,13 @@
   <img src="docs/weaverx-hero.png" alt="WeaveRx — medical AI GitHub issue triage" width="900" />
 </p>
 
+<p align="center">
+  <a href="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml"><img src="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/FratresMedAI/WeaveRx/releases"><img src="https://img.shields.io/github/v/release/FratresMedAI/WeaveRx?label=release" alt="Release" /></a>
+  <img src="https://img.shields.io/badge/python-3.11%20|%203.12-blue" alt="Python" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
+</p>
+
 # WeaveRx
 
 **Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
@@ -9,6 +16,63 @@
 WeaveRx helps maintainers of MONAI, nnU-Net, and related projects triage issues faster — classifying reproducibility blockers, dataset access friction, subgroup performance questions, privacy/DICOM concerns, and clinical validation requests. It produces a **review-ready draft comment** with **sources** (issue excerpts that grounded the decision) and **safeguard scores** (local heuristics, no extra LLM calls).
 
 Built for medical AI maintainers, research groups, and hospital OSS teams who need practical tooling — not a gatekeeper bot.
+
+### Install
+
+PyPI is on the [near-term roadmap](#roadmap-near-term). Today, install from source or a GitHub release:
+
+```bash
+# Latest tagged release
+pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.0
+
+# Contributors / local dev
+git clone https://github.com/FratresMedAI/WeaveRx.git
+cd WeaveRx
+pip install -e ".[dev]"
+```
+
+---
+
+## See it in action
+
+### CLI triage (mock — no API keys)
+
+Command: `weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock`
+
+```
+Issue #42 - Unable to reproduce nnU-Net training results on BraTS subset
+┌──────────────────────┬──────────────────────────────────────────────────┐
+│ Category             │ Reproducibility & Environment                    │
+│ Priority             │ HIGH                                             │
+│ Status               │ ready for review                                 │
+│ Sources              │ 2 excerpt(s) (use --verbose)                     │
+│ LLM                  │ mock / mock                                      │
+│ Safeguard score      │ 0.0 / 10                                         │
+│ Safeguard status     │ CLEAN                                            │
+└──────────────────────┴──────────────────────────────────────────────────┘
+╭─ Draft response ─────────────────────────────────────────────────────────╮
+│ Hi @researcher-dev - thank you for taking the time to write this up.     │
+│ ... checklist: PyTorch, CUDA, MONAI/nnU-Net versions, preprocessing ...  │
+╰──────────────────────────────────────────────────────────────────────────╯
+```
+
+Full terminal capture: [`examples/captured_triage_clean.txt`](examples/captured_triage_clean.txt)
+
+### Safeguard warning (when a draft looks risky)
+
+Advisory only — you still choose whether to post. Example when credential-like patterns or repetition fire:
+
+```
+│ Safeguard score      │ 8.0 / 10                                         │
+│ Safeguard status     │ HIGH RISK                                        │
+│ Safeguard flags      │ credential_like_pattern, heavy_repetition        │
+╭─ Draft response ─────────────────────────────────────────────────────────╮
+│ (panel border turns yellow/red — review before posting)                  │
+╰──────────────────────────────────────────────────────────────────────────╯
+Safeguard: high risk — review draft carefully before posting.
+```
+
+Full capture: [`examples/captured_safeguard_warning.txt`](examples/captured_safeguard_warning.txt) · JSON: [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json)
 
 ---
 
@@ -55,12 +119,14 @@ A typical `--json` result (abbreviated draft text):
     "triggered": [],
     "metrics": { "entropy": 4.69, "char_count": 608, "relevance_ratio": 0.27 }
   },
-  "llm": { "provider": "grok", "model": "xai/grok-2-latest" },
+  "llm": { "provider": "mock", "model": "mock" },
   "dry_run": true
 }
 ```
 
-When safeguards flag a draft (advisory only — you still decide whether to post):
+Full JSON: [`examples/sample_triage_output.json`](examples/sample_triage_output.json)
+
+When safeguards flag a draft:
 
 ```json
 "safeguard": {
@@ -71,15 +137,16 @@ When safeguards flag a draft (advisory only — you still decide whether to post
       "id": "credential_like_pattern",
       "severity": "high",
       "message": "Draft contains a credential-like token pattern (e.g. API key shape)."
+    },
+    {
+      "id": "low_relevance",
+      "severity": "medium",
+      "message": "Draft keyword overlap with issue is low (0.06, threshold 0.08).",
+      "metric": 0.06
     }
   ]
 }
 ```
-
-Full examples: [`examples/sample_triage_output.json`](examples/sample_triage_output.json), [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json).
-
-<!-- screenshot: CLI table output — see examples/sample_triage_cli.txt -->
-<!-- screenshot: batch summary with Safeguard OK/REV/RISK column -->
 
 ---
 
@@ -94,13 +161,9 @@ Full examples: [`examples/sample_triage_output.json`](examples/sample_triage_out
 
 ## Quickstart
 
-**Requirements:** Python 3.11+
+**Requirements:** Python 3.11+ · CI runs on 3.11 and 3.12 ([workflow](.github/workflows/ci.yml))
 
-```bash
-git clone https://github.com/FratresMedAI/WeaveRx.git
-cd WeaveRx
-pip install -e ".[dev]"
-```
+Already installed? Jump to [step 1](#1-mock-zero-api-keys). New here? Use [Install](#install) above.
 
 ### 1. Mock (zero API keys)
 
@@ -116,30 +179,47 @@ weaverx triage --repo Project-MONAI/MONAI --issue 1234 --mock-llm --dry-run
 
 ### 3. Real LLM analysis
 
-**Grok (default):**
+WeaveRx uses [LiteLLM](https://github.com/BerriAI/litellm) — same JSON output schema for every provider. Pick **one** block below:
+
+<details>
+<summary><strong>Grok</strong> (default) — <code>XAI_API_KEY</code></summary>
 
 ```bash
 export XAI_API_KEY=xai-...
-weaverx triage --repo Project-MONAI/MONAI --issue 1234 --dry-run
+weaverx triage --repo Project-MONAI/MONAI --issue 1234 --dry-run --json
+# same as: --llm-provider grok
 ```
 
-**Anthropic:**
+</details>
+
+<details>
+<summary><strong>Anthropic</strong> — <code>ANTHROPIC_API_KEY</code></summary>
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-weaverx triage --repo Project-MONAI/MONAI --issue 1234 --llm-provider anthropic --dry-run
+weaverx triage --repo Project-MONAI/MONAI --issue 1234 \
+  --llm-provider anthropic --dry-run --json
 ```
 
-**OpenAI-compatible** (OpenAI, Azure, local vLLM, etc.):
+Optional: `export WEAVERX_LLM_MODEL=anthropic/claude-3-5-haiku-20241022`
+
+</details>
+
+<details>
+<summary><strong>OpenAI-compatible</strong> — OpenAI, Azure, vLLM, local gateways</summary>
 
 ```bash
 export OPENAI_API_KEY=sk-...
-# optional for non-OpenAI hosts:
-export OPENAI_API_BASE=https://your-host/v1
-export WEAVERX_LLM_MODEL=openai/your-model-name
+export OPENAI_API_BASE=https://your-host/v1   # omit for api.openai.com
+export WEAVERX_LLM_MODEL=openai/gpt-4o
 
-weaverx triage --repo Project-MONAI/MONAI --issue 1234 --llm-provider openai --dry-run
+weaverx triage --repo Project-MONAI/MONAI --issue 1234 \
+  --llm-provider openai --dry-run --json
 ```
+
+</details>
+
+More copy-paste examples: [`examples/llm_provider_examples.md`](examples/llm_provider_examples.md)
 
 `GITHUB_TOKEN` is optional for public repos (recommended for rate limits). Add `issues:write` only if posting comments or labels.
 
@@ -250,6 +330,8 @@ After generating a draft, WeaveRx runs **fast, local-only** checks — **no LLM 
 
 Disable: `--no-safeguards` or `WEAVERX_SAFEGUARDS=0`. Tune: `WEAVERX_SAFEGUARD_ENTROPY_MAX`, `WEAVERX_SAFEGUARD_MAX_CHARS`.
 
+**What it looks like when triggered:** see [Safeguard warning](#safeguard-warning-when-a-draft-looks-risky) above and [`examples/sample_safeguard_warning.json`](examples/sample_safeguard_warning.json).
+
 Complements privacy keyword scanning. [Safire](https://github.com/FratresMedAI/Safire) is a separate path for deeper audit tooling.
 
 ---
@@ -319,18 +401,18 @@ See [`action.yml`](action.yml) and [`.github/workflows/triage-on-issue.yml`](.gi
 pip install -e ".[dev]"
 ruff check .
 mypy src/weaverx
-pytest
+pytest    # 43 tests, offline by default
 ```
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for PR expectations and safety constraints.
+CI badge at the top reflects this workflow on every push. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for PR expectations and safety constraints.
 
 ---
 
 ## Roadmap (near-term)
 
-1. **Embedding-based duplicate detection** — optional `weaverx[embeddings]` extra
-2. **PR triage mode** — `--pr` for pull request review drafts
-3. **PyPI publish** — `pip install weaverx`
+1. **PyPI publish** — `pip install weaverx` (install from [release tag](https://github.com/FratresMedAI/WeaveRx/releases) today)
+2. **Embedding-based duplicate detection** — optional `weaverx[embeddings]` extra
+3. **PR triage mode** — `--pr` for pull request review drafts
 
 ---
 
