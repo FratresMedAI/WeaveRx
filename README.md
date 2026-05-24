@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/weaverx-hero.png" alt="WeaveRx — neon logo for medical AI GitHub issue triage" width="820" />
+  <img src="docs/weaverx-hero.png" alt="WeaveRx logo: neon pink and green wordmark with Rx medical symbol on a dark cyberpunk background of neural networks and circuit traces" width="820" />
 </p>
 
 # WeaveRx
@@ -303,6 +303,8 @@ pytest -m "not network" --cov=weaverx
 ```
 
 [CONTRIBUTING.md](https://github.com/FratresMedAI/WeaveRx/blob/master/CONTRIBUTING.md) · [CODE_OF_CONDUCT.md](https://github.com/FratresMedAI/WeaveRx/blob/master/CODE_OF_CONDUCT.md) · [releasing.md](https://fratresmedai.github.io/WeaveRx/releasing/)
+
+**Contributing:** Issues, docs fixes, and PRs are welcome — see [CONTRIBUTING.md](https://github.com/FratresMedAI/WeaveRx/blob/master/CONTRIBUTING.md) to get started.
 
 ---
 
