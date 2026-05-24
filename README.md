@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/weaverx-hero.png" alt="WeaveRx — medical AI GitHub issue triage" width="900" />
+  <img src="docs/weaverx-hero.png" alt="WeaveRx — neon logo for medical AI GitHub issue triage" width="820" />
 </p>
 
 # WeaveRx
