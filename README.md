@@ -4,13 +4,13 @@
 
 # WeaveRx
 
+**Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
+
 [![PyPI version](https://img.shields.io/pypi/v/weaverx)](https://pypi.org/project/weaverx/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/FratresMedAI/WeaveRx/workflows/CI/badge.svg)](https://github.com/FratresMedAI/WeaveRx/actions)
 [![Coverage](https://img.shields.io/badge/coverage-75%25+-brightgreen)](https://github.com/FratresMedAI/WeaveRx)
-
-**Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
 
 WeaveRx helps maintainers triage issues faster — reproducibility blockers, dataset access, subgroup performance, privacy/DICOM, and clinical validation requests — with **sources** (issue excerpts that grounded the decision) and **safeguard scores** (local heuristics, no extra LLM calls).
 
@@ -149,22 +149,15 @@ Full JSON: [`examples/sample_triage_output.json`](examples/sample_triage_output.
 
 ## Installation
 
+See the full installation guide: [installation.md](https://fratresmedai.github.io/WeaveRx/installation/)
+
+**Quick install:**
+
 ```bash
 pip install weaverx
 ```
 
 Python 3.11+ required.
-
-For development or contributing:
-
-```bash
-git clone https://github.com/FratresMedAI/WeaveRx.git
-cd WeaveRx
-pip install -e ".[dev]"
-pre-commit install
-```
-
-See the full installation guide in [docs/installation.md](https://fratresmedai.github.io/WeaveRx/installation/).
 
 ---
 
