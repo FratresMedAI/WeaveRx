@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Few-shot triage examples in LLM prompts for more consistent JSON and tone
+- GitHub client retries on rate limits (429) and transient server errors
+- Typed GitHub API errors (`GitHubRateLimitError`, `GitHubPermissionError`, `GitHubNotFoundError`)
+- Pagination for issue comments and recent-issue fetches
+- Category-specific draft refinements (repro, dataset access, clinical validation, bug repro, duplicate cross-links)
+- Tests for GitHub error handling, LLM prompt structure, and draft refinement
+
+### Changed
+
+- GitHub token validation on client init
+- Duplicate detection compares longer issue body excerpts (800 chars)
+
 ## [0.1.2] - 2026-05-24
 
 ### Fixed

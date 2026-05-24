@@ -35,8 +35,8 @@ def similarity_score(source: GitHubIssue, candidate: GitHubIssue) -> float:
 
     title_a = normalize_text(source.title)
     title_b = normalize_text(candidate.title)
-    body_a = normalize_text(source.body)[:500]
-    body_b = normalize_text(candidate.body)[:500]
+    body_a = normalize_text(source.body)[:800]
+    body_b = normalize_text(candidate.body)[:800]
 
     title_ratio = SequenceMatcher(None, title_a, title_b).ratio()
     body_ratio = SequenceMatcher(None, body_a, body_b).ratio() if body_a and body_b else 0.0

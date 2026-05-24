@@ -154,7 +154,7 @@ class TriageOrchestrator:
             privacy_insight=options.privacy_insight,
             issue_comments=comments,
         )
-        draft = refine_draft(issue, analysis)
+        draft = refine_draft(issue, analysis, duplicate_matches=duplicates)
 
         safeguard = None
         if options.safeguards:

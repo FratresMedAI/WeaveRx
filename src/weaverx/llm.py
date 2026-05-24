@@ -139,8 +139,111 @@ Respond with ONLY valid JSON matching this schema:
 
 Include 1-4 sources citing the specific issue text (title, body, or comments) that informed
 your category, priority, and draft. Keep snippets short and verbatim where possible.
+
+Draft responses should:
+- Open with a warm greeting to the issue author (@username when known)
+- Acknowledge the specific blocker before suggesting next steps
+- Offer concrete, category-appropriate asks (versions, configs, access steps)
+- Never request PHI, patient identifiers, or raw DICOM with identifiers in public threads
 {privacy_note}
 """
+
+
+def _few_shot_messages() -> list[dict[str, str]]:
+    """Compact examples to stabilize JSON structure and tone."""
+    return [
+        {
+            "role": "user",
+            "content": (
+                "Triage this GitHub issue:\n\n"
+                "**Repository issue:** #1204\n"
+                "**Title:** Cannot reproduce nnU-Net BraTS Dice scores\n"
+                "**Author:** ml-researcher\n"
+                "**Labels:** question\n"
+                "**Body:**\n"
+                "Using PyTorch 2.2, CUDA 12.1, MONAI 1.3, default nnUNetTrainer fold 0. "
+                "Dice ~5% below paper.\n\n"
+                "**Recent comments:**\nNone.\n\n"
+                "Heuristic duplicate score from recent issues: 0.12\n"
+                "Candidate duplicates:\nNone found.\n\n"
+                "Produce JSON triage analysis with a helpful draft_response ready to post."
+            ),
+        },
+        {
+            "role": "assistant",
+            "content": json.dumps(
+                {
+                    "category": "reproducibility-environment",
+                    "priority": "high",
+                    "impact_summary": (
+                        "Benchmark reproduction mismatch may block trust in reported BraTS scores."
+                    ),
+                    "duplicate_likelihood": 0.12,
+                    "suggested_labels": ["reproducibility", "environment", "nnunet"],
+                    "draft_response": (
+                        "Hi @ml-researcher — thank you for documenting your setup carefully.\n\n"
+                        "A ~5% Dice gap often traces to preprocessing plans, fold/seed, or "
+                        "package versions. Could you share PyTorch/CUDA/MONAI/nnU-Net versions, "
+                        "the trainer/plan ID, and a minimal command? No patient data needed."
+                    ),
+                    "privacy_flags": [],
+                    "reasoning": "Reproduction/environment mismatch on a standard benchmark.",
+                    "sources": [
+                        {
+                            "type": "issue_body",
+                            "snippet": "Dice ~5% below paper",
+                            "reason": "Quantified reproduction gap drives high priority.",
+                        }
+                    ],
+                }
+            ),
+        },
+        {
+            "role": "user",
+            "content": (
+                "Triage this GitHub issue:\n\n"
+                "**Repository issue:** #88\n"
+                "**Title:** CheXpert subset download returns 403\n"
+                "**Author:** clinician-dev\n"
+                "**Labels:** dataset\n"
+                "**Body:**\n"
+                "Submitted the license form but the mirror link still returns 403.\n\n"
+                "**Recent comments:**\nNone.\n\n"
+                "Heuristic duplicate score from recent issues: 0.05\n"
+                "Candidate duplicates:\nNone found.\n\n"
+                "Produce JSON triage analysis with a helpful draft_response ready to post."
+            ),
+        },
+        {
+            "role": "assistant",
+            "content": json.dumps(
+                {
+                    "category": "dataset-access-licensing",
+                    "priority": "medium",
+                    "impact_summary": (
+                        "Dataset access blocked after licensing step; slows downstream experiments."
+                    ),
+                    "duplicate_likelihood": 0.05,
+                    "suggested_labels": ["dataset", "data-access"],
+                    "draft_response": (
+                        "Hi @clinician-dev — sorry the mirror is blocking you after the form.\n\n"
+                        "Could you note which URL returns 403 and whether you received a "
+                        "confirmation email? We can point you to the current access docs or "
+                        "a community mirror if available."
+                    ),
+                    "privacy_flags": [],
+                    "reasoning": "Classic dataset licensing/access friction.",
+                    "sources": [
+                        {
+                            "type": "issue_body",
+                            "snippet": "mirror link still returns 403",
+                            "reason": "Access failure described in issue body.",
+                        }
+                    ],
+                }
+            ),
+        },
+    ]
 
 
 def _build_user_prompt(
@@ -493,8 +596,9 @@ class LiteLLMProvider(LLMProvider):
         privacy_insight: bool = True,
         issue_comments: list[GitHubComment] | None = None,
     ) -> TriageAnalysis:
-        messages = [
+        messages: list[dict[str, str]] = [
             {"role": "system", "content": _build_system_prompt(privacy_insight=privacy_insight)},
+            *_few_shot_messages(),
             {
                 "role": "user",
                 "content": _build_user_prompt(
