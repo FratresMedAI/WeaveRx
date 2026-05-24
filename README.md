@@ -6,11 +6,13 @@
 
 **Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
 
-[![PyPI version](https://img.shields.io/pypi/v/weaverx)](https://pypi.org/project/weaverx/)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/FratresMedAI/WeaveRx/workflows/CI/badge.svg)](https://github.com/FratresMedAI/WeaveRx/actions)
-[![Coverage](https://img.shields.io/badge/coverage-75%25+-brightgreen)](https://github.com/FratresMedAI/WeaveRx)
+<p align="center">
+  <a href="https://pypi.org/project/weaverx/"><img src="https://img.shields.io/pypi/v/weaverx" alt="PyPI"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.11+-3776AB?logo=python&logoColor=white" alt="Python 3.11+"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
+  <a href="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml"><img src="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://fratresmedai.github.io/WeaveRx/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-informational" alt="Docs"></a>
+</p>
 
 WeaveRx helps maintainers triage issues faster — reproducibility blockers, dataset access, subgroup performance, privacy/DICOM, and clinical validation requests — with **sources** (issue excerpts that grounded the decision) and **safeguard scores** (local heuristics, no extra LLM calls).
 
