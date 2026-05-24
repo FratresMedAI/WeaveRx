@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-24
+
 ### Added
 
 - Few-shot triage examples in LLM prompts for more consistent JSON and tone
@@ -14,12 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Typed GitHub API errors (`GitHubRateLimitError`, `GitHubPermissionError`, `GitHubNotFoundError`)
 - Pagination for issue comments and recent-issue fetches
 - Category-specific draft refinements (repro, dataset access, clinical validation, bug repro, duplicate cross-links)
+- Dedicated [installation guide](https://fratresmedai.github.io/WeaveRx/installation/) with virtualenv and troubleshooting
 - Tests for GitHub error handling, LLM prompt structure, and draft refinement
 
 ### Changed
 
 - GitHub token validation on client init
 - Duplicate detection compares longer issue body excerpts (800 chars)
+- README launch polish: compact hero, centered badge row, short Installation section, contributing call-to-action
 
 ## [0.1.2] - 2026-05-24
 
@@ -66,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock mode for offline demos and CI
 - Human-in-the-loop defaults (`--dry-run`, `--confirm` for writes)
 
-[Unreleased]: https://github.com/FratresMedAI/WeaveRx/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/FratresMedAI/WeaveRx/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.3
 [0.1.2]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.2
 [0.1.1]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.1
 [0.1.0]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.0

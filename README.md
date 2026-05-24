@@ -184,7 +184,7 @@ Read more: [ETHICS.md](https://github.com/FratresMedAI/WeaveRx/blob/master/ETHIC
 Dry-run triage when issues are opened:
 
 ```yaml
-- uses: FratresMedAI/WeaveRx@v0.1.2
+- uses: FratresMedAI/WeaveRx@v0.1.3
   with:
     repo: ${{ github.repository }}
     issue_number: ${{ github.event.issue.number }}

@@ -39,7 +39,7 @@ weaverx --help
 Pin a release tag if you need a specific version:
 
 ```bash
-pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.2
+pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.3
 ```
 
 ## Development install
@@ -83,7 +83,7 @@ See [Contributing](https://github.com/FratresMedAI/WeaveRx/blob/master/CONTRIBUT
 **GitHub install fails**
 
 - Ensure Git is installed and reachable.
-- Pin an existing tag (e.g. `@v0.1.2`) rather than a branch name.
+- Pin an existing tag (e.g. `@v0.1.3`) rather than a branch name.
 
 ## Configuration
 
@@ -100,7 +100,7 @@ weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock
 Use a release tag in workflows:
 
 ```yaml
-- uses: FratresMedAI/WeaveRx@v0.1.2
+- uses: FratresMedAI/WeaveRx@v0.1.3
   with:
     repo: ${{ github.repository }}
     issue_number: ${{ github.event.issue.number }}
