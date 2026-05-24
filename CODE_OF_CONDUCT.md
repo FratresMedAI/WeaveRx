@@ -59,8 +59,9 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-**conduct@fratresmed.ai** (replace with your team's contact if different).
+reported to the maintainers by [opening a private contact issue](https://github.com/FratresMedAI/WeaveRx/issues/new/choose)
+or via [GitHub Security Advisories](https://github.com/FratresMedAI/WeaveRx/security/advisories/new)
+for sensitive reports.
 
 All complaints will be reviewed and investigated promptly and fairly.
 

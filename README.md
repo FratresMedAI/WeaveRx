@@ -39,6 +39,18 @@ Full docs: [`docs/index.md`](docs/index.md) · Configuration: [`docs/configurati
 
 Requires Python 3.11+. Environment variables: [`docs/configuration.md`](docs/configuration.md).
 
+**One-liner demo:**
+
+```bash
+pip install weaverx && weaverx triage --repo Project-MONAI/MONAI --issue 42 --mock
+```
+
+### 0. Install
+
+```bash
+pip install weaverx
+```
+
 ### 1. Mock (zero API keys)
 
 ```bash
@@ -146,7 +158,7 @@ pip install weaverx
 Or install from GitHub:
 
 ```bash
-pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.1
+pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.2
 ```
 
 Contributors / local dev:
@@ -182,7 +194,7 @@ Read more: [`ETHICS.md`](ETHICS.md) · [`SECURITY.md`](SECURITY.md) · [`SUPPORT
 Dry-run triage when issues are opened:
 
 ```yaml
-- uses: FratresMedAI/WeaveRx@v0.1.1
+- uses: FratresMedAI/WeaveRx@v0.1.2
   with:
     repo: ${{ github.repository }}
     issue_number: ${{ github.event.issue.number }}

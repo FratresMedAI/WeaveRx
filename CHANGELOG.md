@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-24
+
+### Fixed
+
+- GitHub Action installs from `github.action_path` so external repos can use `FratresMedAI/WeaveRx@v*`
+- PyPI release workflow fails visibly when publish breaks (removed `continue-on-error`)
+
+### Changed
+
+- Quickstart leads with `pip install weaverx` and a one-liner demo command
+- Code of Conduct enforcement contact points to GitHub issue templates
+
 ## [0.1.1] - 2026-05-23
 
 ### Added
@@ -40,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock mode for offline demos and CI
 - Human-in-the-loop defaults (`--dry-run`, `--confirm` for writes)
 
-[Unreleased]: https://github.com/FratresMedAI/WeaveRx/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/FratresMedAI/WeaveRx/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.2
 [0.1.1]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.1
 [0.1.0]: https://github.com/FratresMedAI/WeaveRx/releases/tag/v0.1.0

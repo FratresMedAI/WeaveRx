@@ -30,7 +30,7 @@ Text fallbacks: [examples/captures/](https://github.com/FratresMedAI/WeaveRx/tre
 Dry-run triage on new issues via [action.yml](https://github.com/FratresMedAI/WeaveRx/blob/master/action.yml):
 
 ```yaml
-- uses: FratresMedAI/WeaveRx@v0.1.1
+- uses: FratresMedAI/WeaveRx@v0.1.2
   with:
     repo: ${{ github.repository }}
     issue_number: ${{ github.event.issue.number }}

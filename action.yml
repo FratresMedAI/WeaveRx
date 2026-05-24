@@ -46,6 +46,7 @@ runs:
 
     - name: Install WeaveRx
       shell: bash
+      working-directory: ${{ github.action_path }}
       run: pip install .
 
     - name: Run triage

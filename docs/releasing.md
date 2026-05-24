@@ -29,8 +29,8 @@ Before the first `v*` tag publish succeeds on PyPI:
 4. Tag and push:
 
 ```bash
-git tag -a v0.1.1 -m "v0.1.1"
-git push origin v0.1.1
+git tag -a v0.1.2 -m "v0.1.2"
+git push origin v0.1.2
 ```
 
 ## Verify locally before tagging
@@ -53,5 +53,5 @@ pip install weaverx
 Fallback:
 
 ```bash
-pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.1
+pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.2
 ```
