@@ -4,21 +4,17 @@
 
 # WeaveRx
 
+[![PyPI version](https://img.shields.io/pypi/v/weaverx)](https://pypi.org/project/weaverx/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/FratresMedAI/WeaveRx/workflows/CI/badge.svg)](https://github.com/FratresMedAI/WeaveRx/actions)
+[![Coverage](https://img.shields.io/badge/coverage-75%25+-brightgreen)](https://github.com/FratresMedAI/WeaveRx)
+
 **Medical AI GitHub issue triage with auditable drafts, local safeguards, and human-in-the-loop defaults.**
 
 WeaveRx helps maintainers triage issues faster — reproducibility blockers, dataset access, subgroup performance, privacy/DICOM, and clinical validation requests — with **sources** (issue excerpts that grounded the decision) and **safeguard scores** (local heuristics, no extra LLM calls).
 
 Built for medical AI maintainers and research groups who need practical tooling — not a gatekeeper bot.
-
-<p align="center">
-  <a href="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml"><img src="https://github.com/FratresMedAI/WeaveRx/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-  <a href="https://pypi.org/project/weaverx/"><img src="https://img.shields.io/pypi/v/weaverx?label=PyPI" alt="PyPI" /></a>
-  <a href="https://github.com/FratresMedAI/WeaveRx/releases"><img src="https://img.shields.io/github/v/release/FratresMedAI/WeaveRx?label=release" alt="Release" /></a>
-  <img src="https://img.shields.io/badge/python-3.11%20|%203.12-blue" alt="Python" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
-  <a href="https://github.com/FratresMedAI/WeaveRx/stargazers"><img src="https://img.shields.io/github/stars/FratresMedAI/WeaveRx?style=social" alt="GitHub stars" /></a>
-  <a href="https://fratresmedai.github.io/WeaveRx/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs" /></a>
-</p>
 
 **Contents:** [Features](#features) · [Quickstart](#quickstart) · [See it in action](#see-it-in-action) · [Installation](#installation) · [Safety](#safety-and-responsible-use) · [Reference](#reference) · [Docs](https://fratresmedai.github.io/WeaveRx/)
 
@@ -31,13 +27,13 @@ Built for medical AI maintainers and research groups who need practical tooling 
 - **Auditable** — `sources` cite issue excerpts; `safeguard` scores are computed locally with no LLM on that path
 - **Your LLM stack** — Grok, Anthropic, or OpenAI-compatible endpoints via [LiteLLM](https://github.com/BerriAI/litellm); mock mode for offline CI and demos
 
-Full docs: [`docs/index.md`](docs/index.md) · Configuration: [`docs/configuration.md`](docs/configuration.md)
+Full docs: [Documentation site](https://fratresmedai.github.io/WeaveRx/) · Configuration: [configuration.md](https://fratresmedai.github.io/WeaveRx/configuration/)
 
 ---
 
 ## Quickstart
 
-Requires Python 3.11+. Environment variables: [`docs/configuration.md`](docs/configuration.md).
+Requires Python 3.11+. Environment variables: [configuration.md](https://fratresmedai.github.io/WeaveRx/configuration/).
 
 **One-liner demo:**
 
@@ -50,6 +46,8 @@ pip install weaverx && weaverx triage --repo Project-MONAI/MONAI --issue 42 --mo
 ```bash
 pip install weaverx
 ```
+
+See [Installation](#installation) for development setup and the full guide.
 
 ### 1. Mock (zero API keys)
 
@@ -155,21 +153,18 @@ Full JSON: [`examples/sample_triage_output.json`](examples/sample_triage_output.
 pip install weaverx
 ```
 
-Or install from GitHub:
+Python 3.11+ required.
 
-```bash
-pip install git+https://github.com/FratresMedAI/WeaveRx.git@v0.1.2
-```
-
-Contributors / local dev:
+For development or contributing:
 
 ```bash
 git clone https://github.com/FratresMedAI/WeaveRx.git
 cd WeaveRx
 pip install -e ".[dev]"
+pre-commit install
 ```
 
-Documentation: [fratresmedai.github.io/WeaveRx](https://fratresmedai.github.io/WeaveRx/)
+See the full installation guide in [docs/installation.md](https://fratresmedai.github.io/WeaveRx/installation/).
 
 ---
 
@@ -185,7 +180,7 @@ WeaveRx is **human-in-the-loop** by design. Drafts require maintainer review bef
 
 **Not for clinical use** — maintainer support tooling only, not medical advice or a clinical decision system. Does not replace IRB, legal, or compliance review.
 
-Read more: [`ETHICS.md`](ETHICS.md) · [`SECURITY.md`](SECURITY.md) · [`SUPPORT.md`](SUPPORT.md)
+Read more: [ETHICS.md](https://github.com/FratresMedAI/WeaveRx/blob/master/ETHICS.md) · [SECURITY.md](https://github.com/FratresMedAI/WeaveRx/blob/master/SECURITY.md) · [SUPPORT.md](https://github.com/FratresMedAI/WeaveRx/blob/master/SUPPORT.md)
 
 ---
 
@@ -225,7 +220,7 @@ See [`action.yml`](action.yml) and [`.github/workflows/triage-on-issue.yml`](.gi
 | Anthropic | `--llm-provider anthropic` | `ANTHROPIC_API_KEY` | `anthropic/claude-3-5-sonnet-20241022` |
 | OpenAI-compatible | `--llm-provider openai` | `OPENAI_API_KEY` | `openai/gpt-4o` |
 
-Override: `WEAVERX_LLM_MODEL`, `WEAVERX_LLM_PROVIDER`. Details: [`docs/reference/llm-providers.md`](docs/reference/llm-providers.md)
+Override: `WEAVERX_LLM_MODEL`, `WEAVERX_LLM_PROVIDER`. Details: [llm-providers.md](https://fratresmedai.github.io/WeaveRx/reference/llm-providers/)
 
 </details>
 
@@ -243,7 +238,7 @@ Override: `WEAVERX_LLM_MODEL`, `WEAVERX_LLM_PROVIDER`. Details: [`docs/reference
 | **Feature/Integration Request** | New capabilities, framework hooks |
 | **Documentation** | Missing or unclear tutorials and API docs |
 
-Full table: [`docs/reference/categories.md`](docs/reference/categories.md)
+Full table: [categories.md](https://fratresmedai.github.io/WeaveRx/reference/categories/)
 
 </details>
 
@@ -258,7 +253,7 @@ Local-only checks after every draft — **advisory**, never auto-block posting. 
 | 3.0 – 6.9 | `review_recommended` | Skim draft before posting |
 | 7.0 – 10.0 | `high_risk` | Multiple or severe heuristics fired |
 
-Full reference: [`docs/reference/safeguards.md`](docs/reference/safeguards.md)
+Full reference: [safeguards.md](https://fratresmedai.github.io/WeaveRx/reference/safeguards/)
 
 </details>
 
@@ -271,7 +266,7 @@ weaverx triage --repo owner/repo [--issue N | --recent N] [options]
 
 Key flags: `--mock`, `--dry-run`, `--json`, `--llm-provider`, `--confirm`, `--post-comment`, `--safeguards`
 
-Full reference: [`docs/reference/cli.md`](docs/reference/cli.md)
+Full reference: [cli.md](https://fratresmedai.github.io/WeaveRx/reference/cli/)
 
 </details>
 
@@ -309,10 +304,10 @@ pip install -e ".[dev]"
 pre-commit install
 ruff check .
 mypy src/weaverx
-pytest --cov=weaverx
+pytest -m "not network" --cov=weaverx
 ```
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [docs/releasing.md](docs/releasing.md)
+[CONTRIBUTING.md](https://github.com/FratresMedAI/WeaveRx/blob/master/CONTRIBUTING.md) · [CODE_OF_CONDUCT.md](https://github.com/FratresMedAI/WeaveRx/blob/master/CODE_OF_CONDUCT.md) · [releasing.md](https://fratresmedai.github.io/WeaveRx/releasing/)
 
 ---
 
