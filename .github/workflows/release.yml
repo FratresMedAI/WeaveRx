@@ -27,7 +27,7 @@ jobs:
         run: |
           ruff check .
           mypy src/weaverx
-          pytest --cov=weaverx --cov-fail-under=75
+          pytest -m "not network" --cov=weaverx --cov-fail-under=75
 
       - name: Build sdist and wheel
         run: python -m build

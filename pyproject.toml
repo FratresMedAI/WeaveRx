@@ -93,7 +93,7 @@ mypy_path = "src"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q -m \"not network\""
 markers = [
     "network: tests that call live external APIs",
 ]

@@ -25,7 +25,7 @@ mypy src/weaverx
 pytest --cov=weaverx
 ```
 
-Most tests run offline with `--mock` data. Optional live tests are marked `@pytest.mark.network`.
+Most tests run offline with `--mock` data. Optional live tests are marked `@pytest.mark.network` — run them explicitly with `pytest -m network`.
 
 ## Pull request expectations
 

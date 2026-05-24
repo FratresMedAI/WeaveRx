@@ -31,7 +31,7 @@ jobs:
         run: mypy src/weaverx
 
       - name: Pytest with coverage
-        run: pytest --cov=weaverx --cov-report=term-missing --cov-fail-under=75
+        run: pytest -m "not network" --cov=weaverx --cov-report=term-missing --cov-fail-under=75
 
       - name: Dependency audit
         run: |
