@@ -1,3 +1,16 @@
+## Maturity
+
+| Field | Value |
+|---|---|
+| **Status** | Active development |
+| **Maturity** | Medium |
+| **Field-ready** | No — not clinical, not field-certified |
+| **Last reviewed** | 2026-08-07 |
+
+Medical AI GitHub triage with auditable drafts and human-in-the-loop defaults.
+
+---
+
 <p align="center">
   <img src="docs/weaverx-hero.png" alt="WeaveRx logo: neon pink and green wordmark with Rx medical symbol on a dark cyberpunk background of neural networks and circuit traces" width="820" />
 </p>
